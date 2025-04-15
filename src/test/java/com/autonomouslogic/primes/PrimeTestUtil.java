@@ -33,5 +33,10 @@ public class PrimeTestUtil {
 			this.number = number;
 			this.isPrime = isPrime;
 		}
+
+		@Override
+		public String toString() {
+			return "PrimeTestNumber{" + "number=" + number + ", isPrime=" + isPrime + '}';
+		}
 	}
 }
