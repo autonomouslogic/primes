@@ -1,9 +1,8 @@
 package com.autonomouslogic.primes;
 
-import org.junit.jupiter.api.Test;
-
 import java.io.FileWriter;
 import java.util.ArrayList;
+import org.junit.jupiter.api.Test;
 
 public class FindPrimes {
 	@Test
@@ -36,8 +35,7 @@ public class FindPrimes {
 				}
 				check += 2;
 			}
-		}
-		finally {
+		} finally {
 			out.close();
 		}
 	}

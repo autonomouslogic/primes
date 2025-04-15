@@ -1,23 +1,52 @@
 plugins {
-    id 'java'
+	id "java"
+	id "idea"
+	id "com.diffplug.spotless" version "7.0.2"
 }
 
-group = 'com.autonomouslogic.primes'
-version = '1.0-SNAPSHOT'
+group = "com.autonomouslogic.primes"
+version = "dev"
+
+java {
+	toolchain {
+		sourceCompatibility = JavaVersion.VERSION_21
+		targetCompatibility = JavaVersion.VERSION_21
+	}
+}
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+	testImplementation platform("org.junit:junit-bom:5.10.0")
+	testImplementation "org.junit.jupiter:junit-jupiter"
 }
 
 test {
-    useJUnitPlatform()
+	useJUnitPlatform()
+	testLogging {
+		events = [ "FAILED", "PASSED", "SKIPPED" ]
+		showExceptions = true
+		exceptionFormat = "FULL"
+		showExceptions = true
+		showCauses = true
+		showStackTraces = true
+	}
+}
+
+spotless {
+	java {
+		target "src/**/*.java"
+		palantirJavaFormat()
+		leadingSpacesToTabs()
+	}
+
+	groovyGradle {
+		leadingSpacesToTabs()
+	}
 }
 
 wrapper {
-    distributionType = "ALL"
+	distributionType = "ALL"
 }
