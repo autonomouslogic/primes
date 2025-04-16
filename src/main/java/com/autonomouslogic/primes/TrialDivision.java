@@ -11,7 +11,7 @@ public class TrialDivision implements PrimalityTest {
 		if (number % 2 == 0) {
 			return false;
 		}
-		var max = (long) Math.sqrt(number) + 1;
+		var max = ((long) Math.sqrt(number)) + 1L;
 		for (int i = 3; i < max; i += 2) {
 			if (number % i == 0) {
 				return false;

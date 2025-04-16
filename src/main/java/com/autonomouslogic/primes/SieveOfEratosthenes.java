@@ -18,14 +18,14 @@ public class SieveOfEratosthenes {
 
 	public List<Long> run() {
 		var max = maxNumber();
-		var address = new int[]{0,0};
+		var address = new int[] {0, 0};
 		for (int i = 0; i < field.length; i++) {
 			for (int j = 0; j < 8; j++) {
 				address[0] = i;
 				address[1] = j;
 				if (isPrime(address, field)) {
 					var p = addressToNumber(address);
-					for (long k = 3L*p; k < max; k+=2*p) {
+					for (long k = 3L * p; k < max; k += 2 * p) {
 						numberToAddress(k, address);
 						setIsNotPrime(address, field);
 					}
@@ -33,6 +33,7 @@ public class SieveOfEratosthenes {
 			}
 		}
 		var primes = new ArrayList<Long>(field.length);
+		primes.add(2L);
 		for (int i = 0; i < field.length; i++) {
 			for (int j = 0; j < 8; j++) {
 				address[0] = i;
@@ -61,13 +62,13 @@ public class SieveOfEratosthenes {
 		return 3L + address[0] * 16L + 2L * address[1];
 	}
 
-	private static  void setIsNotPrime(long number, byte[] field) {
-		var address = new int[]{0,0};
+	private static void setIsNotPrime(long number, byte[] field) {
+		var address = new int[] {0, 0};
 		numberToAddress(number, address);
 		setIsNotPrime(address, field);
 	}
 
-	private static  void setIsNotPrime(int[] address, byte[] field) {
+	private static void setIsNotPrime(int[] address, byte[] field) {
 		field[address[0]] = (byte) (field[address[0]] | (1 << address[1]));
 	}
 
@@ -82,11 +83,11 @@ public class SieveOfEratosthenes {
 	}
 
 	public long maxNumber() {
-		return addressToNumber(new int[]{field.length -1, 7});
+		return addressToNumber(new int[] {field.length - 1, 7});
 	}
 
 	public static SieveOfEratosthenes forMaxNumber(long number) {
-		var address = new int[]{0,0};
+		var address = new int[] {0, 0};
 		numberToAddress(number, address);
 		return new SieveOfEratosthenes(address[0] + 1);
 	}

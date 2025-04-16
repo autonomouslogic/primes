@@ -2,7 +2,6 @@ package com.autonomouslogic.primes;
 
 import java.io.FileWriter;
 import java.util.ArrayList;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
