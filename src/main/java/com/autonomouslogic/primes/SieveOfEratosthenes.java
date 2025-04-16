@@ -25,7 +25,7 @@ public class SieveOfEratosthenes {
 				address[1] = j;
 				if (isPrime(address, field)) {
 					var p = addressToNumber(address);
-					for (long k = 3L * p; k < max; k += 2 * p) {
+					for (long k = 3L * p; k <= max; k += 2 * p) {
 						numberToAddress(k, address);
 						setIsNotPrime(address, field);
 					}

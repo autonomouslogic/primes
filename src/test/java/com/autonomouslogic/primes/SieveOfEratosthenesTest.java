@@ -43,8 +43,8 @@ public class SieveOfEratosthenesTest {
 
 	@Test
 	void shouldReturnMaxNumber() {
-		var sieve = new SieveOfEratosthenes(16);
-		assertEquals(3 + 15 * 16 + 2 * 7, sieve.maxNumber());
+		assertEquals(17L, new SieveOfEratosthenes(1).maxNumber());
+		assertEquals(33L, new SieveOfEratosthenes(2).maxNumber());
 	}
 
 	@Test
