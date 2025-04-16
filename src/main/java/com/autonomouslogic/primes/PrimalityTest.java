@@ -1,5 +1,12 @@
 package com.autonomouslogic.primes;
 
-public interface PrimalityTest {
+import java.util.function.LongPredicate;
+
+public interface PrimalityTest extends LongPredicate {
 	boolean isPrime(long number);
+
+	@Override
+	default boolean test(long value) {
+		return isPrime(value);
+	}
 }
