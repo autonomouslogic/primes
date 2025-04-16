@@ -1,6 +1,7 @@
 package com.autonomouslogic.primes;
 
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <ul>
@@ -13,15 +14,35 @@ public class SieveOfEratosthenes {
 
 	public SieveOfEratosthenes(int memory) {
 		field = new byte[memory];
-		setIsPrime(3, field);
 	}
 
-	public Stream<Long> run() {
+	public List<Long> run() {
+		var max = maxNumber();
+		var address = new int[]{0,0};
 		for (int i = 0; i < field.length; i++) {
 			for (int j = 0; j < 8; j++) {
-
+				address[0] = i;
+				address[1] = j;
+				if (isPrime(address, field)) {
+					var p = addressToNumber(address);
+					for (long k = 3L*p; k < max; k+=2*p) {
+						numberToAddress(k, address);
+						setIsNotPrime(address, field);
+					}
+				}
 			}
 		}
+		var primes = new ArrayList<Long>(field.length);
+		for (int i = 0; i < field.length; i++) {
+			for (int j = 0; j < 8; j++) {
+				address[0] = i;
+				address[1] = j;
+				if (isPrime(address, field)) {
+					primes.add(addressToNumber(address));
+				}
+			}
+		}
+		return primes;
 	}
 
 	protected static void numberToAddress(long number, int[] address) {
@@ -40,18 +61,20 @@ public class SieveOfEratosthenes {
 		return 3L + address[0] * 16L + 2L * address[1];
 	}
 
-	private static  void setIsPrime(long number, byte[] field) {
+	private static  void setIsNotPrime(long number, byte[] field) {
 		var address = new int[]{0,0};
 		numberToAddress(number, address);
-		setIsPrime(address, field);
+		setIsNotPrime(address, field);
 	}
 
-	private static  void setIsPrime(int[] address, byte[] field) {
+	private static  void setIsNotPrime(int[] address, byte[] field) {
 		field[address[0]] = (byte) (field[address[0]] | (1 << address[1]));
 	}
 
 	private static boolean isPrime(int[] address, byte[] field) {
-		return field[address[0]] & (1 << address[1]) > 0;
+		var word = field[address[0]];
+		var mask = (byte) (1 << address[1]);
+		return (word & mask) == 0x0;
 	}
 
 	public long minNumber() {

@@ -52,13 +52,13 @@ public class SieveOfEratosthenesTest {
 
 	@Test
 	void shouldSieve() {
-		var expectedPrimes = PrimeList.PRIMES;
-		var lastExpectedPrime = expectedPrimes[expectedPrimes.length-1];
+		var expectedPrimes = Arrays.stream(PrimeList.PRIMES).filter(p ->p!= 2L).boxed().toList();
+		var lastExpectedPrime = expectedPrimes.getLast();
 		var sieve = SieveOfEratosthenes.forMaxNumber(lastExpectedPrime);
-		var primes = sieve.run().filter(p -> p<=lastExpectedPrime).toList();
+		var primes = sieve.run().stream().filter(p -> p<=lastExpectedPrime).toList();
 		assertEquals(
-			Arrays.stream(expectedPrimes).mapToObj(Integer::toString).collect(Collectors.joining("\n")),
-			primes.stream().map(Object::toString).collect(Collectors.joining("\n"))
+			expectedPrimes.stream().map(String::valueOf).collect(Collectors.joining("\n")),
+			primes.stream().map(String::valueOf).collect(Collectors.joining("\n"))
 		);
 	}
 }
