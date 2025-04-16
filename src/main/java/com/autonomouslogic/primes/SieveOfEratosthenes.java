@@ -6,8 +6,6 @@ import java.util.stream.LongStream;
  * <a href="https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of Eratosthenes</a>
  */
 public class SieveOfEratosthenes {
-	private static final long WORD_LEN = Long.SIZE;
-	public static final long WORD_BYTE_SIZE = WORD_LEN / Byte.SIZE;
 	private final PrimeBitSet primeBits;
 
 	public SieveOfEratosthenes(int memory) {
@@ -16,7 +14,8 @@ public class SieveOfEratosthenes {
 
 	public LongStream run() {
 		var lastNumber = lastNumber();
-		for (long n = 3; n <= lastNumber; n += 2) {
+		var lastCheck = (long) Math.sqrt(lastNumber) + 1;
+		for (long n = 3; n <= lastCheck; n += 2) {
 			if (primeBits.isPrime(n)) {
 				for (long k = 3L * n; k <= lastNumber; k += 2L * n) {
 					primeBits.setIsNotPrime(k);

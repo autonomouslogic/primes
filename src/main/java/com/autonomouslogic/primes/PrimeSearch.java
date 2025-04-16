@@ -13,12 +13,10 @@ public class PrimeSearch {
 	public static void main(String[] args) {
 		var memory = Configs.MAX_MEMORY.getRequired();
 		log.info(String.format("Starting search with %.2f MiB of memory", memory / (double) (1 << 20)));
-		var words = (int) (memory / SieveOfEratosthenes.WORD_BYTE_SIZE);
-		log.info("Using {} words", words);
 
 		log.info("Running sieve");
 		var start = Instant.now();
-		var primes = new SieveOfEratosthenes(words).run();
+		var primes = new SieveOfEratosthenes(memory * 8).run();
 		var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
 		log.info("Sieve completed in {}", time);
 
