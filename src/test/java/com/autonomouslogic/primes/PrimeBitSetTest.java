@@ -54,6 +54,12 @@ public class PrimeBitSetTest {
 				Arguments.of(119, 23));
 	}
 
+	@Test
+	void shouldReturnMaxNumber() {
+		assertEquals(59L, new PrimeBitSet(1).getLastNumber());
+		assertEquals(89L, new PrimeBitSet(2).getLastNumber());
+	}
+
 	@ParameterizedTest
 	@MethodSource("bitsetTests")
 	void shouldSetBits(PrimeTestUtil.PrimeTestNumber test) {
