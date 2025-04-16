@@ -2,6 +2,7 @@ package com.autonomouslogic.primes;
 
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.stream.LongStream;
 import lombok.Getter;
 
 /**
@@ -27,18 +28,14 @@ public class PrimeBitSet {
 	}
 
 	public void setIsNotPrime(long number) {
-		if (number < 30) {
+		if (number <= 30) {
 			return;
 		}
-		if (number % 2 == 0) {
+		var address = numberToAddress(number);
+		if (address < 0) {
 			return;
 		}
-		int b = Arrays.binarySearch(OFFSETS, (int) (number % NUMBERS_PER_BYTE));
-		if (b < 0) {
-			return;
-		}
-		int a = (int) (number / NUMBERS_PER_BYTE) - 1;
-		bits.set(a * NUMBERS_PER_BYTE + b);
+		bits.set(address);
 	}
 
 	public boolean isPrime(long number) {
@@ -53,32 +50,42 @@ public class PrimeBitSet {
 			}
 			return false;
 		}
-		if (number % 2 == 0) {
+		var address = numberToAddress(number);
+		if (address < 0) {
 			return false;
+		}
+		return !bits.get(address);
+	}
+
+	protected static int numberToAddress(long number) {
+		if (number % 2 == 0) {
+			return -1;
 		}
 		int b = Arrays.binarySearch(OFFSETS, (int) (number % NUMBERS_PER_BYTE));
 		if (b < 0) {
-			return false;
+			return -1;
 		}
 		int a = (int) (number / NUMBERS_PER_BYTE) - 1;
-		return !bits.get(a * NUMBERS_PER_BYTE + b);
+		return a * 8 + b;
 	}
 
-	private int numberToBit(long number) {
-		return 0;
+	protected static long addressToNumber(int address) {
+		long b = address / 8;
+		return (b + 1) * (long) NUMBERS_PER_BYTE + (long) OFFSETS[address % 8];
 	}
 
-	//	public LongStream primeStream() {
-	//		var primes = LongStream.range(0, field.length).flatMap(i -> {
-	//			return LongStream.range(0, WORD_LEN).flatMap(j -> {
-	//				if (isPrime((int) i, (int) j, field)) {
-	//					var n = addressToNumber((int) i, (int) j);
-	//					return LongStream.of(n);
-	//				} else {
-	//					return LongStream.empty();
-	//				}
-	//			});
-	//		});
-	//		return LongStream.concat(LongStream.of(2L), primes);
-	//	}
+	public LongStream primeStream() {
+		var primes = LongStream.range(0, lastNumber / (long) NUMBERS_PER_BYTE).flatMap(b -> {
+			var p = new long[8];
+			var i = 0;
+			for (int j = 0; j < 8; j++) {
+				int address = (int) (b * 8 + j);
+				if (!bits.get(address)) {
+					p[i++] = addressToNumber(address);
+				}
+			}
+			return Arrays.stream(p).filter(n -> n > 0);
+		});
+		return LongStream.concat(Arrays.stream(FIRST_PRIMES), primes);
+	}
 }
