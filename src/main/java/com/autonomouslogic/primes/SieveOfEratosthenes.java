@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class SieveOfEratosthenes {
 	private static final long WORD_LEN = Long.SIZE;
+	public static final long WORD_BYTE_SIZE = WORD_LEN / Byte.SIZE;
 	private static final long NUMBERS_PER_WORD = WORD_LEN * 2L;
 	private static final long FIRST_FIELD_NUMBER = 3;
 	private final long[] field;
