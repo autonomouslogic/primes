@@ -8,6 +8,13 @@ plugins {
 group = "com.autonomouslogic.primes"
 version = "dev"
 
+ext {
+	envProperties = new Properties()
+	if (file("env/local.env").exists()) {
+		file("env/local.env").withInputStream { envProperties.load(it) }
+	}
+}
+
 java {
 	toolchain {
 		sourceCompatibility = JavaVersion.VERSION_21
@@ -60,7 +67,7 @@ wrapper {
 
 tasks.register('primeSearch', JavaExec) {
 	group "application"
-	environment("MAX_MEMORY", String.valueOf(8L << 30))
+	environment envProperties
 	classpath = sourceSets.main.runtimeClasspath
 	mainClass = "com.autonomouslogic.primes.PrimeSearch"
 	jvmArgs = [

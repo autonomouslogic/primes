@@ -11,7 +11,7 @@ import lombok.extern.log4j.Log4j2;
 public class PrimeSearch {
 	@SneakyThrows
 	public static void main(String[] args) {
-		var memory = Configs.MAX_MEMORY.getRequired();
+		var memory = Configs.SIEVE_MEMORY_BYTES.getRequired();
 		log.info(String.format("Starting search with %.2f MiB of memory", memory / (double) (1 << 20)));
 		var words = (int) (memory / SieveOfEratosthenes.WORD_BYTE_SIZE);
 		log.info("Using {} words", words);
