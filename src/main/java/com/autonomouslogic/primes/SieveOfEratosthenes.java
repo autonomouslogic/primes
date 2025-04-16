@@ -1,7 +1,6 @@
 package com.autonomouslogic.primes;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.LongStream;
 
 /**
  * <ul>
@@ -20,7 +19,7 @@ public class SieveOfEratosthenes {
 		field = new long[memory];
 	}
 
-	public List<Long> run() {
+	public LongStream run() {
 		var max = maxNumber();
 		var address = new int[] {0, 0};
 		for (int i = 0; i < field.length; i++) {
@@ -36,19 +35,17 @@ public class SieveOfEratosthenes {
 				}
 			}
 		}
-		var primes = new ArrayList<Long>(field.length);
-		primes.add(2L);
-		for (int i = 0; i < field.length; i++) {
-			for (int j = 0; j < WORD_LEN; j++) {
-				address[0] = i;
-				address[1] = j;
-				if (isPrime(address, field)) {
-					var n = addressToNumber(address);
-					primes.add(n);
+		var primes = LongStream.range(0, field.length).flatMap(i -> {
+			return LongStream.range(0, WORD_LEN).flatMap(j -> {
+				if (isPrime((int) i, (int) j, field)) {
+					var n = addressToNumber((int) i, (int) j);
+					return LongStream.of(n);
+				} else {
+					return LongStream.empty();
 				}
-			}
-		}
-		return primes;
+			});
+		});
+		return LongStream.concat(LongStream.of(2L), primes);
 	}
 
 	protected static void numberToAddress(long number, int[] address) {
@@ -64,7 +61,11 @@ public class SieveOfEratosthenes {
 	}
 
 	protected static long addressToNumber(int[] address) {
-		return FIRST_FIELD_NUMBER + address[0] * NUMBERS_PER_WORD + 2L * address[1];
+		return addressToNumber(address[0], address[1]);
+	}
+
+	protected static long addressToNumber(int a, int b) {
+		return FIRST_FIELD_NUMBER + a * NUMBERS_PER_WORD + 2L * b;
 	}
 
 	protected static void setIsNotPrime(int[] address, long[] field) {
@@ -72,8 +73,12 @@ public class SieveOfEratosthenes {
 	}
 
 	protected static boolean isPrime(int[] address, long[] field) {
-		var word = field[address[0]];
-		var mask = 1L << address[1];
+		return isPrime(address[0], address[1], field);
+	}
+
+	protected static boolean isPrime(int a, int b, long[] field) {
+		var word = field[a];
+		var mask = 1L << b;
 		return (word & mask) == 0L;
 	}
 

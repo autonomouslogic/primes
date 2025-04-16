@@ -89,7 +89,7 @@ public class SieveOfEratosthenesTest {
 		var expectedPrimes = Arrays.stream(PrimeList.PRIMES).boxed().toList();
 		var lastExpectedPrime = expectedPrimes.getLast();
 		var sieve = SieveOfEratosthenes.forMaxNumber(lastExpectedPrime);
-		var primes = sieve.run().stream().filter(p -> p <= lastExpectedPrime).toList();
+		var primes = sieve.run().filter(p -> p <= lastExpectedPrime).boxed().toList();
 		assertEquals(
 				expectedPrimes.stream().map(String::valueOf).collect(Collectors.joining("\n")),
 				primes.stream().map(String::valueOf).collect(Collectors.joining("\n")));
@@ -98,12 +98,10 @@ public class SieveOfEratosthenesTest {
 	@Test
 	void shouldSieve() {
 		var primes = new SieveOfEratosthenes(16 << 10).run();
-		System.out.println(primes.size());
-		System.out.println(primes.stream().skip(primes.size() - 10).toList());
 		var test = new TrialDivision();
-		for (long prime : primes) {
+		primes.forEach(prime -> {
 			assertTrue(test.isPrime(prime), String.valueOf(prime));
-		}
+		});
 	}
 
 	@Test
@@ -112,7 +110,7 @@ public class SieveOfEratosthenesTest {
 		var sieve = new SieveOfEratosthenes(1 << 20);
 		System.out.println(sieve.maxNumber());
 		var primes = sieve.run();
-		System.out.println(primes.size());
-		System.out.println(primes.getLast());
+		//		System.out.println(primes.size());
+		//		System.out.println(primes.getLast());
 	}
 }

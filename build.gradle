@@ -60,10 +60,10 @@ wrapper {
 
 tasks.register('primeSearch', JavaExec) {
 	group "application"
-	environment("MAX_MEMORY", String.valueOf(128<<20))
+	environment("MAX_MEMORY", String.valueOf(6<<30))
 	classpath = sourceSets.main.runtimeClasspath
 	mainClass = "com.autonomouslogic.primes.PrimeSearch"
 	jvmArgs = [
-			"-Xmx4G",
+			"-Xmx8G",
 	]
 }
