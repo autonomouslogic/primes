@@ -24,6 +24,9 @@ public class TrialDivisionTest {
 		var nums = new HashSet<Long>();
 		while (nums.size() < 100) {
 			var i = rng.nextLong(1_000_000_000_000L) + 1_000_000_000L;
+			if (i % 2 == 0) {
+				continue;
+			}
 			if (test.isPrime(i)) {
 				nums.add(i);
 			}
