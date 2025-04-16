@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -103,5 +104,15 @@ public class SieveOfEratosthenesTest {
 		for (long prime : primes) {
 			assertTrue(test.isPrime(prime), String.valueOf(prime));
 		}
+	}
+
+	@Test
+	@Disabled
+	void run() {
+		var sieve = new SieveOfEratosthenes(1 << 20);
+		System.out.println(sieve.maxNumber());
+		var primes = sieve.run();
+		System.out.println(primes.size());
+		System.out.println(primes.getLast());
 	}
 }
