@@ -19,7 +19,7 @@ public class SieveOfEratosthenes {
 		for (long n = 3; n <= lastNumber; n += 2) {
 			if (primeBits.isPrime(n)) {
 				for (long k = 3L * n; k <= lastNumber; k += 2L * n) {
-					primeBits.setIsNotPrime(n);
+					primeBits.setIsNotPrime(k);
 				}
 			}
 		}
