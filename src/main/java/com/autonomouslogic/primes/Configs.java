@@ -3,9 +3,9 @@ package com.autonomouslogic.primes;
 import com.autonomouslogic.commons.config.Config;
 
 public class Configs {
-	public static final Config<Long> MAX_MEMORY = Config.<Long>builder()
+	public static final Config<Integer> MAX_MEMORY = Config.<Integer>builder()
 			.name("MAX_MEMORY")
-			.type(Long.class)
-			.defaultValue(1L << 20)
+			.type(Integer.class)
+			.defaultValue(1 << 20)
 			.build();
 }
