@@ -1,9 +1,12 @@
 package com.autonomouslogic.primes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -52,6 +55,32 @@ public class SieveOfEratosthenesTest {
 	void shouldConstructForMaxNumber() {
 		assertEquals(129L, SieveOfEratosthenes.forMaxNumber(129L).maxNumber());
 		assertEquals(257L, SieveOfEratosthenes.forMaxNumber(257L).maxNumber());
+	}
+
+	@ParameterizedTest
+	@MethodSource("bitFieldTests")
+	void shouldSetBitsInBitFields(int i, int j) {
+		var field = new long[2];
+		SieveOfEratosthenes.setIsNotPrime(new int[] {i, j}, field);
+		for (int p = 0; p < 2; p++) {
+			for (int q = 0; q < 64; q++) {
+				if (i == p && j == q) {
+					assertFalse(SieveOfEratosthenes.isPrime(new int[] {p, q}, field), i + "," + j + "-" + p + "," + q);
+				} else {
+					assertTrue(SieveOfEratosthenes.isPrime(new int[] {p, q}, field), i + "," + j + "-" + p + "," + q);
+				}
+			}
+		}
+	}
+
+	static List<Arguments> bitFieldTests() {
+		var tests = new ArrayList<Arguments>();
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 64; j++) {
+				tests.add(Arguments.of(i, j));
+			}
+		}
+		return tests;
 	}
 
 	@Test
