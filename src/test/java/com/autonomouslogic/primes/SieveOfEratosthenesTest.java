@@ -1,11 +1,15 @@
 package com.autonomouslogic.primes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,9 +19,8 @@ public class SieveOfEratosthenesTest {
 	@ParameterizedTest
 	@MethodSource("addressingTests")
 	void shouldConvertNumbersToAddresses(long number, int address0, int address1) {
-		var sieve = new SieveOfEratosthenes(16);
 		var address = new int[] {0, 0};
-		sieve.numberToAddress(number, address);
+		SieveOfEratosthenes.numberToAddress(number, address);
 		assertEquals(address0, address[0]);
 		assertEquals(address1, address[1]);
 	}
@@ -25,9 +28,8 @@ public class SieveOfEratosthenesTest {
 	@ParameterizedTest
 	@MethodSource("addressingTests")
 	void shouldConvertAddressesToNumbers(long number, int address0, int address1) {
-		var sieve = new SieveOfEratosthenes(16);
 		var address = new int[] {address0, address1};
-		assertEquals(number, sieve.addressToNumber(address));
+		assertEquals(number, SieveOfEratosthenes.addressToNumber(address));
 	}
 
 	static Stream<Arguments> addressingTests() {
@@ -35,16 +37,51 @@ public class SieveOfEratosthenesTest {
 				Arguments.of(3, 0, 0),
 				Arguments.of(5, 0, 1),
 				Arguments.of(17, 0, 7),
-				Arguments.of(19, 1, 0),
-				Arguments.of(33, 1, 7),
-				Arguments.of(35, 2, 0),
-				Arguments.of(49, 2, 7));
+				Arguments.of(129, 0, 63),
+				Arguments.of(131, 1, 0),
+				Arguments.of(145, 1, 7),
+				Arguments.of(257, 1, 63),
+				Arguments.of(259, 2, 0),
+				Arguments.of(273, 2, 7),
+				Arguments.of(385, 2, 63));
 	}
 
 	@Test
 	void shouldReturnMaxNumber() {
-		assertEquals(17L, new SieveOfEratosthenes(1).maxNumber());
-		assertEquals(33L, new SieveOfEratosthenes(2).maxNumber());
+		assertEquals(129L, new SieveOfEratosthenes(1).maxNumber());
+		assertEquals(257L, new SieveOfEratosthenes(2).maxNumber());
+	}
+
+	@Test
+	void shouldConstructForMaxNumber() {
+		assertEquals(129L, SieveOfEratosthenes.forMaxNumber(129L).maxNumber());
+		assertEquals(257L, SieveOfEratosthenes.forMaxNumber(257L).maxNumber());
+	}
+
+	@ParameterizedTest
+	@MethodSource("bitFieldTests")
+	void shouldSetBitsInBitFields(int i, int j) {
+		var field = new long[2];
+		SieveOfEratosthenes.setIsNotPrime(new int[] {i, j}, field);
+		for (int p = 0; p < 2; p++) {
+			for (int q = 0; q < 64; q++) {
+				if (i == p && j == q) {
+					assertFalse(SieveOfEratosthenes.isPrime(new int[] {p, q}, field), i + "," + j + "-" + p + "," + q);
+				} else {
+					assertTrue(SieveOfEratosthenes.isPrime(new int[] {p, q}, field), i + "," + j + "-" + p + "," + q);
+				}
+			}
+		}
+	}
+
+	static List<Arguments> bitFieldTests() {
+		var tests = new ArrayList<Arguments>();
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 64; j++) {
+				tests.add(Arguments.of(i, j));
+			}
+		}
+		return tests;
 	}
 
 	@Test
@@ -60,12 +97,22 @@ public class SieveOfEratosthenesTest {
 
 	@Test
 	void shouldSieve() {
-		var primes = new SieveOfEratosthenes(128 << 10).run();
+		var primes = new SieveOfEratosthenes(16 << 10).run();
 		System.out.println(primes.size());
 		System.out.println(primes.stream().skip(primes.size() - 10).toList());
 		var test = new TrialDivision();
 		for (long prime : primes) {
 			assertTrue(test.isPrime(prime), String.valueOf(prime));
 		}
+	}
+
+	@Test
+	@Disabled
+	void run() {
+		var sieve = new SieveOfEratosthenes(1 << 20);
+		System.out.println(sieve.maxNumber());
+		var primes = sieve.run();
+		System.out.println(primes.size());
+		System.out.println(primes.getLast());
 	}
 }
