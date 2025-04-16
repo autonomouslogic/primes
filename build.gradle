@@ -2,6 +2,7 @@ plugins {
 	id "java"
 	id "idea"
 	id "com.diffplug.spotless" version "7.0.2"
+	id "io.freefair.lombok" version "8.12.2.1"
 }
 
 group = "com.autonomouslogic.primes"
@@ -19,6 +20,10 @@ repositories {
 }
 
 dependencies {
+	implementation "com.autonomouslogic.commons:commons-java:1.9.5"
+	implementation "org.apache.logging.log4j:log4j-api:2.24.3"
+	implementation "org.apache.logging.log4j:log4j-core:2.24.3"
+	implementation "org.apache.logging.log4j:log4j-slf4j2-impl:2.24.3"
 //	implementation "com.google.guava:guava:33.4.8-jre"
 
 	testImplementation platform("org.junit:junit-bom:5.10.0")
@@ -51,4 +56,14 @@ spotless {
 
 wrapper {
 	distributionType = "ALL"
+}
+
+tasks.register('primeSearch', JavaExec) {
+	group "application"
+	environment("MAX_MEMORY", String.valueOf(128<<20))
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = "com.autonomouslogic.primes.PrimeSearch"
+	jvmArgs = [
+			"-Xmx4G",
+	]
 }
