@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+	implementation "com.autonomouslogic.commons:commons-java:1.9.5"
 //	implementation "com.google.guava:guava:33.4.8-jre"
 
 	testImplementation platform("org.junit:junit-bom:5.10.0")
@@ -51,4 +52,14 @@ spotless {
 
 wrapper {
 	distributionType = "ALL"
+}
+
+
+tasks.register("primeSearch", type: JavaExec) {
+	group "application"
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = "com.autonomouslogic.primes.PrimeSearch"
+	jvmArgs = [
+		"-XX:MaxRAMPercentage=25.0",
+	]
 }
