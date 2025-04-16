@@ -18,12 +18,12 @@ public class TrialDivisionTest {
 
 	@Test
 	@Disabled
-	void findPrimes() {
+	void findLargePrimes() {
 		var test = new TrialDivision();
 		var rng = new SecureRandom();
 		var nums = new HashSet<Long>();
-		while (nums.size() < 100) {
-			var i = rng.nextLong(1_000_000_000_000L) + 1_000_000_000L;
+		while (nums.size() < 5) {
+			var i = rng.nextLong(10_000_000_000_000_000L) + 10_000_000_000_000_000L;
 			if (i % 2 == 0) {
 				continue;
 			}
