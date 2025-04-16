@@ -10,17 +10,20 @@ import java.util.List;
  * </ul>
  */
 public class SieveOfEratosthenes {
-	private final byte[] field;
+	private static final long WORD_LEN = Long.SIZE;
+	private static final long NUMBERS_PER_WORD = WORD_LEN * 2L;
+	private static final long FIRST_FIELD_NUMBER = 3;
+	private final long[] field;
 
 	public SieveOfEratosthenes(int memory) {
-		field = new byte[memory];
+		field = new long[memory];
 	}
 
 	public List<Long> run() {
 		var max = maxNumber();
 		var address = new int[] {0, 0};
 		for (int i = 0; i < field.length; i++) {
-			for (int j = 0; j < 8; j++) {
+			for (int j = 0; j < WORD_LEN; j++) {
 				address[0] = i;
 				address[1] = j;
 				if (isPrime(address, field)) {
@@ -35,11 +38,12 @@ public class SieveOfEratosthenes {
 		var primes = new ArrayList<Long>(field.length);
 		primes.add(2L);
 		for (int i = 0; i < field.length; i++) {
-			for (int j = 0; j < 8; j++) {
+			for (int j = 0; j < WORD_LEN; j++) {
 				address[0] = i;
 				address[1] = j;
 				if (isPrime(address, field)) {
-					primes.add(addressToNumber(address));
+					var n = addressToNumber(address);
+					primes.add(n);
 				}
 			}
 		}
@@ -53,29 +57,23 @@ public class SieveOfEratosthenes {
 		if (number < 3) {
 			throw new IllegalArgumentException(number + " is less than 3");
 		}
-		long n = number - 3L;
-		address[0] = (int) (n / 16L);
-		address[1] = (int) ((n - 16L * address[0]) / 2L);
+		long n = number - FIRST_FIELD_NUMBER;
+		address[0] = (int) (n / NUMBERS_PER_WORD);
+		address[1] = (int) ((n - NUMBERS_PER_WORD * address[0]) / 2L);
 	}
 
 	protected static long addressToNumber(int[] address) {
-		return 3L + address[0] * 16L + 2L * address[1];
+		return FIRST_FIELD_NUMBER + address[0] * NUMBERS_PER_WORD + 2L * address[1];
 	}
 
-	private static void setIsNotPrime(long number, byte[] field) {
-		var address = new int[] {0, 0};
-		numberToAddress(number, address);
-		setIsNotPrime(address, field);
+	protected static void setIsNotPrime(int[] address, long[] field) {
+		field[address[0]] |= (1L << address[1]);
 	}
 
-	private static void setIsNotPrime(int[] address, byte[] field) {
-		field[address[0]] = (byte) (field[address[0]] | (1 << address[1]));
-	}
-
-	private static boolean isPrime(int[] address, byte[] field) {
+	protected static boolean isPrime(int[] address, long[] field) {
 		var word = field[address[0]];
-		var mask = (byte) (1 << address[1]);
-		return (word & mask) == 0x0;
+		var mask = 1L << address[1];
+		return (word & mask) == 0L;
 	}
 
 	public long minNumber() {
@@ -83,7 +81,7 @@ public class SieveOfEratosthenes {
 	}
 
 	public long maxNumber() {
-		return addressToNumber(new int[] {field.length - 1, 7});
+		return addressToNumber(new int[] {field.length - 1, (int) WORD_LEN - 1});
 	}
 
 	public static SieveOfEratosthenes forMaxNumber(long number) {
