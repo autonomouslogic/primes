@@ -26,26 +26,26 @@ public class PrimeBitSet {
 	private final BitSet bits = new BitSet();
 
 	public PrimeBitSet(final long maxMemory) {
-		this(0, maxMemory);
+		this(NUMBERS_PER_BYTE, maxMemory);
 	}
 
 	public PrimeBitSet(final long offset, final long maxMemory) {
 		if (maxMemory > MAX_MEMORY) {
 			throw new IllegalArgumentException(maxMemory + " is too large, maximum allowed: " + MAX_MEMORY);
 		}
-		if (offset < 0) {
-			throw new IllegalArgumentException(offset + " is negative");
+		if (offset < NUMBERS_PER_BYTE) {
+			throw new IllegalArgumentException(offset + " is less that " + NUMBERS_PER_BYTE);
 		}
 		if (offset % NUMBERS_PER_BYTE != 0) {
 			throw new IllegalArgumentException(offset + " is not a multiple of " + NUMBERS_PER_BYTE);
 		}
-		if (offset == 0) {
+		if (offset == NUMBERS_PER_BYTE) {
 			this.firstNumber = FIRST_PRIMES[0];
 		} else {
 			this.firstNumber = offset + OFFSETS[0];
 		}
 		this.offset = offset;
-		lastNumber = offset + NUMBERS_PER_BYTE * maxMemory + OFFSETS[7];
+		lastNumber = offset + NUMBERS_PER_BYTE * (maxMemory - 1) + OFFSETS[7];
 	}
 
 	public void setIsNotPrime(long number) {
@@ -62,10 +62,10 @@ public class PrimeBitSet {
 
 	private void checkNumber(long number) {
 		if (number < firstNumber) {
-			throw new IllegalArgumentException(number + " is below offset");
+			throw new IllegalArgumentException(number + " is less than first number " + firstNumber);
 		}
 		if (number > lastNumber) {
-			throw new IllegalArgumentException(number + " is above max");
+			throw new IllegalArgumentException(number + " is larger than last number " + lastNumber);
 		}
 	}
 
@@ -97,13 +97,13 @@ public class PrimeBitSet {
 		if (b < 0) {
 			return -1;
 		}
-		int a = (int) (number / NUMBERS_PER_BYTE) - 1;
+		int a = (int) (number / NUMBERS_PER_BYTE);
 		return a * 8 + b;
 	}
 
 	protected static long addressToNumber(long offset, int address) {
 		long b = address / 8;
-		return (b + 1) * (long) NUMBERS_PER_BYTE + (long) OFFSETS[address % 8] + offset;
+		return b * (long) NUMBERS_PER_BYTE + (long) OFFSETS[address % 8] + offset;
 	}
 
 	public LongStream primeStream() {
@@ -118,7 +118,7 @@ public class PrimeBitSet {
 			}
 			return Arrays.stream(p).filter(n -> n > 0);
 		});
-		if (offset == 0) {
+		if (offset == 30) {
 			return LongStream.concat(Arrays.stream(FIRST_PRIMES), primes);
 		} else {
 			return primes;
