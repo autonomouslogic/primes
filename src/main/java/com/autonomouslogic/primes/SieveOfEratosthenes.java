@@ -31,6 +31,9 @@ public class SieveOfEratosthenes {
 
 	public LongStream run() {
 		var firstNumber = getFirstNumber();
+		if (firstNumber == 2) {
+			firstNumber = 3;
+		}
 		var lastNumber = getLastNumber();
 		var lastCheck = getLastCheck();
 		for (long n = firstNumber; n <= lastCheck; n += 2) {
