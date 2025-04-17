@@ -12,10 +12,28 @@ public class SieveOfEratosthenes {
 		primeBits = new PrimeBitSet(memory);
 	}
 
+	public SieveOfEratosthenes(long offset, int memory) {
+		primeBits = new PrimeBitSet(offset, memory);
+	}
+
+	public void init(LongStream primes) {
+		var firstNumber = getFirstNumber();
+		var lastNumber = getLastNumber();
+		var lastCheck = getLastCheck();
+		primes.takeWhile(n -> n <= lastCheck).forEach(n -> {
+			for (long k = 3L * n; k <= lastNumber; k += 2L * n) {
+				if (k >= firstNumber) {
+					primeBits.setIsNotPrime(k);
+				}
+			}
+		});
+	}
+
 	public LongStream run() {
-		var lastNumber = lastNumber();
-		var lastCheck = (long) Math.sqrt(lastNumber) + 1;
-		for (long n = 3; n <= lastCheck; n += 2) {
+		var firstNumber = getFirstNumber();
+		var lastNumber = getLastNumber();
+		var lastCheck = getLastCheck();
+		for (long n = firstNumber; n <= lastCheck; n += 2) {
 			if (primeBits.isPrime(n)) {
 				for (long k = 3L * n; k <= lastNumber; k += 2L * n) {
 					primeBits.setIsNotPrime(k);
@@ -26,7 +44,15 @@ public class SieveOfEratosthenes {
 		return primeBits.primeStream();
 	}
 
-	public long lastNumber() {
+	private long getLastCheck() {
+		return (long) Math.sqrt(getLastNumber()) + 1;
+	}
+
+	public long getFirstNumber() {
+		return primeBits.getFirstNumber();
+	}
+
+	public long getLastNumber() {
 		return primeBits.getLastNumber();
 	}
 }
