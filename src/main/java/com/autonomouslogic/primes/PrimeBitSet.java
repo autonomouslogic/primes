@@ -21,6 +21,7 @@ public class PrimeBitSet {
 	@Getter
 	private final long lastNumber;
 
+	private final long maxMemory;
 	private final long offset;
 
 	private final BitSet bits = new BitSet();
@@ -45,7 +46,8 @@ public class PrimeBitSet {
 			this.firstNumber = offset + OFFSETS[0];
 		}
 		this.offset = offset;
-		lastNumber = offset + NUMBERS_PER_BYTE * (maxMemory - 1) + OFFSETS[7];
+		lastNumber = addressToNumber(offset, (int) maxMemory * 8 - 1);
+		this.maxMemory = maxMemory;
 	}
 
 	public void setIsNotPrime(long number) {
@@ -107,7 +109,7 @@ public class PrimeBitSet {
 	}
 
 	public LongStream primeStream() {
-		var primes = LongStream.range(0, lastNumber / (long) NUMBERS_PER_BYTE).flatMap(b -> {
+		var primes = LongStream.range(0, maxMemory).flatMap(b -> {
 			var p = new long[8];
 			var i = 0;
 			for (int j = 0; j < 8; j++) {

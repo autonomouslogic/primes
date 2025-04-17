@@ -49,4 +49,14 @@ public class SieveOfEratosthenesTest {
 						.collect(Collectors.joining("\n")),
 				primes.stream().map(String::valueOf).collect(Collectors.joining("\n")));
 	}
+
+	@Test
+	void shouldSieveLargePrimesWithInitialList() {
+		var firstSieve = new SieveOfEratosthenes(1 << 20);
+		var offset = firstSieve.getLastNumber() - firstSieve.getLastNumber() % 30;
+		var secondSieve = new SieveOfEratosthenes(offset, 1 << 20);
+		secondSieve.init(firstSieve.run());
+		var lastPrime = secondSieve.run().max().getAsLong();
+		assertTrue(new TrialDivision().isPrime(lastPrime), String.valueOf(lastPrime));
+	}
 }
