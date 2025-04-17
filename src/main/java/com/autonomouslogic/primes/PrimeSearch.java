@@ -86,7 +86,7 @@ public class PrimeSearch {
 		}
 		var memory = Configs.SIEVE_MEMORY_BYTES.getRequired();
 		log.info(String.format("Preparing search with %.2f MiB of memory", memory / (double) (1 << 20)));
-		sieve = new SieveOfEratosthenes(offset, memory * 8);
+		sieve = new SieveOfEratosthenes(offset, memory);
 	}
 
 	@SneakyThrows
