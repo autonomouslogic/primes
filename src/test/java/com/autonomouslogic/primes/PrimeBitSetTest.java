@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class PrimeBitSetTest {
 	@ParameterizedTest
@@ -78,6 +79,17 @@ public class PrimeBitSetTest {
 		assertEquals(30 + 29, new PrimeBitSet(1).getLastNumber());
 		assertEquals(2 * 30 + 29, new PrimeBitSet(2).getLastNumber());
 		assertEquals(3 * 30 + 29, new PrimeBitSet(60, 2).getLastNumber());
+		assertEquals(9 * 30 + 29 + 300, new PrimeBitSet(300, 10).getLastNumber());
+	}
+
+	@ParameterizedTest
+	@ValueSource(ints = {30, 300})
+	void firstAndLastNumberShouldMatchNumbersInOutput(int offset) {
+		var set = new PrimeBitSet(offset, 10);
+		var first = set.primeStream().min().getAsLong();
+		var last = set.primeStream().max().getAsLong();
+		assertEquals(first, set.getFirstNumber());
+		assertEquals(last, set.getLastNumber());
 	}
 
 	@ParameterizedTest

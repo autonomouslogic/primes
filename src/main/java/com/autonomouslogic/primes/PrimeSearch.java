@@ -117,7 +117,7 @@ public class PrimeSearch {
 			primes = primes.filter(n -> n > lastPrime);
 		}
 		if (isFirstFile) {
-			log.info("First time, truncating to one million");
+			log.info("First file, truncating to one million");
 			primes = primes.filter(n -> n < 1000000);
 		}
 		return primes;
@@ -131,6 +131,7 @@ public class PrimeSearch {
 		long n = 0;
 		try (var out = new FileWriter(primeFile, StandardCharsets.UTF_8)) {
 			var iterator = primes.iterator();
+			var trial = new TrialDivision();
 			while (iterator.hasNext()) {
 				var prime = iterator.next();
 				out.write(String.valueOf(prime));

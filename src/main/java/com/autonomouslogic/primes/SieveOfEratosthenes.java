@@ -20,7 +20,7 @@ public class SieveOfEratosthenes {
 		var firstNumber = getFirstNumber();
 		var lastNumber = getLastNumber();
 		var lastCheck = getLastCheck();
-		primes.takeWhile(n -> n <= lastCheck).forEach(n -> {
+		primes.filter(n -> n != 2).takeWhile(n -> n <= lastCheck).forEach(n -> {
 			for (long k = 3L * n; k <= lastNumber; k += 2L * n) {
 				if (k >= firstNumber) {
 					primeBits.setIsNotPrime(k);
