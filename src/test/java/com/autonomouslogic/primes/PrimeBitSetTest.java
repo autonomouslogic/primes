@@ -17,13 +17,25 @@ public class PrimeBitSetTest {
 	@ParameterizedTest
 	@MethodSource("addressingTests")
 	void shouldConvertNumbersToAddresses(long number, int address) {
-		assertEquals(address, PrimeBitSet.numberToAddress(number));
+		assertEquals(address, PrimeBitSet.numberToAddress(0, number));
 	}
 
 	@ParameterizedTest
 	@MethodSource("addressingTests")
 	void shouldConvertAddressesToNumbers(long number, int address) {
-		assertEquals(number, PrimeBitSet.addressToNumber(address));
+		assertEquals(number, PrimeBitSet.addressToNumber(0, address));
+	}
+
+	@ParameterizedTest
+	@MethodSource("addressingTests")
+	void shouldConvertNumbersToAddressesWithOffsets(long number, int address) {
+		assertEquals(address, PrimeBitSet.numberToAddress(120, number + 120));
+	}
+
+	@ParameterizedTest
+	@MethodSource("addressingTests")
+	void shouldConvertAddressesToNumbersWithOffsets(long number, int address) {
+		assertEquals(number + 120, PrimeBitSet.addressToNumber(120, address));
 	}
 
 	static Stream<Arguments> addressingTests() {
@@ -55,9 +67,19 @@ public class PrimeBitSetTest {
 	}
 
 	@Test
-	void shouldReturnMaxNumber() {
+	void shouldReturnLastNumber() {
 		assertEquals(59L, new PrimeBitSet(1).getLastNumber());
 		assertEquals(89L, new PrimeBitSet(2).getLastNumber());
+		assertEquals(59L + 30, new PrimeBitSet(30, 1).getLastNumber());
+		assertEquals(89L + 60, new PrimeBitSet(60, 2).getLastNumber());
+	}
+
+	@Test
+	void shouldReturnFirstNumber() {
+		assertEquals(2L, new PrimeBitSet(1).getFirstNumber());
+		assertEquals(2L, new PrimeBitSet(100).getFirstNumber());
+		assertEquals(31L, new PrimeBitSet(30, 1).getFirstNumber());
+		assertEquals(61L, new PrimeBitSet(60, 1).getFirstNumber());
 	}
 
 	@ParameterizedTest
@@ -89,14 +111,38 @@ public class PrimeBitSetTest {
 	@Test
 	void shouldOutputPrimes() {
 		var bits = new PrimeBitSet(1 << 20);
+		assertEquals(2, bits.getFirstNumber());
+		assertEquals((1 << 20) * 30 + 29, bits.getLastNumber());
 		var last = PRIMES[PRIMES.length - 1];
-		for (int i = 0; i <= last; i++) {
+		for (int i = 2; i <= last; i++) {
 			if (Arrays.binarySearch(PRIMES, i) < 0) {
 				bits.setIsNotPrime(i);
 			}
 		}
 		assertEquals(
 				Arrays.stream(PRIMES).mapToObj(String::valueOf).collect(Collectors.joining("\n")),
+				bits.primeStream()
+						.takeWhile(n -> n <= last)
+						.mapToObj(String::valueOf)
+						.collect(Collectors.joining("\n")));
+	}
+
+	@Test
+	void shouldOutputPrimesWithOffset() {
+		var bits = new PrimeBitSet(3000, 1 << 20);
+		assertEquals(3000 + 1, bits.getFirstNumber());
+		assertEquals((1 << 20) * 30 + 29 + 3000, bits.getLastNumber());
+		var last = PRIMES[PRIMES.length - 1];
+		for (int i = 3001; i <= last; i++) {
+			if (Arrays.binarySearch(PRIMES, i) < 0) {
+				bits.setIsNotPrime(i);
+			}
+		}
+		assertEquals(
+				Arrays.stream(PRIMES)
+						.filter(p -> p > 3000)
+						.mapToObj(String::valueOf)
+						.collect(Collectors.joining("\n")),
 				bits.primeStream()
 						.takeWhile(n -> n <= last)
 						.mapToObj(String::valueOf)
