@@ -11,15 +11,21 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.HashingOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 
@@ -59,14 +65,18 @@ public class PrimeSearch {
 
 		log.info("Running sieve");
 		var start = Instant.now();
-		var primes = new SieveOfEratosthenes(offset, memory * 8).run();
+		var sieve = new SieveOfEratosthenes(offset, memory * 8);
+		if (!isFirstFile) {
+			initSieve(sieve, indexMeta);
+		}
+		var primes = sieve.run();
 		if (finalLastPrime != 0) {
 			log.info("Filtering primes starting from {}", finalLastPrime);
 			primes = primes.filter(n -> n > finalLastPrime);
 		}
 		if (isFirstFile) {
 			log.info("First time, truncating to one million");
-			primes = primes.takeWhile(n -> n < 1000000);
+			primes = primes.filter(n -> n < 1000000);
 		}
 		var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
 		log.info("Sieve completed in {}", time);
@@ -75,10 +85,9 @@ public class PrimeSearch {
 
 		var primeFile = new File(
 				String.format("/tmp/primes-%02d.txt", indexMeta.getPrimeFiles().size()));
-		fileMeta.setUrl("https://data.kennethjorgensen.com/primes/" + primeFile.getName());
 		log.info("Writing primes to {}", primeFile);
-		int n = 0;
-		try (var out = new FileWriter(primeFile)) {
+		long n = 0;
+		try (var out = new FileWriter(primeFile, StandardCharsets.UTF_8)) {
 			var iterator = primes.iterator();
 			while (iterator.hasNext()) {
 				var prime = iterator.next();
@@ -93,14 +102,47 @@ public class PrimeSearch {
 				n++;
 			}
 		}
-		fileMeta.setCount(n).setSize(primeFile.length());
+		fileMeta.setCount(n).setUncompressedSize(primeFile.length());
 
 		log.info("Wrote {} primes", n);
+
+		if (!isFirstFile) {
+			start = Instant.now();
+			log.info("Compressing {}", primeFile);
+			var xz = new ProcessBuilder("xz", primeFile.getPath()).start();
+			var exit = xz.waitFor();
+			if (exit != 0) {
+				throw new RuntimeException("XZ failed: " + exit);
+			}
+			time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
+			log.info("Compression completed in {}", time);
+			primeFile = new File(primeFile.getPath() + ".xz");
+			fileMeta.setCompressedSize(primeFile.length());
+		}
+
+		fileMeta.setUrl("https://data.kennethjorgensen.com/primes/" + primeFile.getName());
 
 		fileMeta.setChecksums(createChecksums(primeFile));
 
 		indexMeta.setUpdated(currentTime).getPrimeFiles().add(fileMeta);
 		objectMapper.writerWithDefaultPrettyPrinter().writeValue(metaFile, indexMeta);
+	}
+
+	@SneakyThrows
+	private static void initSieve(SieveOfEratosthenes sieve, IndexMeta indexMeta) {
+		for (var primeFile : indexMeta.getPrimeFiles()) {
+			var file = new File("/tmp", new File(URI.create(primeFile.getUrl()).getPath()).getName());
+			log.info("Initialising sieve from {}", file);
+			try (var fin = new FileInputStream(file)) {
+				InputStream in = fin;
+				if (file.getName().endsWith(".xz")) {
+					in = new XZCompressorInputStream(in);
+				}
+				var reader = new BufferedReader(new InputStreamReader(in));
+				var stream = reader.lines().filter(s -> !s.isEmpty()).mapToLong(Long::valueOf);
+				sieve.init(stream);
+			}
+		}
 	}
 
 	private static ChecksumsMeta createChecksums(File primeFile) {
