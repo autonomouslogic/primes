@@ -45,12 +45,29 @@ public class PrimeSearch {
 				: new IndexMeta().setPrimeFiles(new ArrayList<>());
 		var isFirstFile = indexMeta.getPrimeFiles().isEmpty();
 
+		long offset = 30;
+		long lastPrime = 0;
+		if (!isFirstFile) {
+			lastPrime = indexMeta.getPrimeFiles().getLast().getLastPrime();
+			offset = lastPrime - (lastPrime % 30);
+			log.info("Previous files detected, using offset {} and lastPrime {}", offset, lastPrime);
+		}
+		final var finalLastPrime = lastPrime;
+
 		var memory = Configs.SIEVE_MEMORY_BYTES.getRequired();
 		log.info(String.format("Starting search with %.2f MiB of memory", memory / (double) (1 << 20)));
 
 		log.info("Running sieve");
 		var start = Instant.now();
-		var primes = new SieveOfEratosthenes(memory * 8).run();
+		var primes = new SieveOfEratosthenes(offset, memory * 8).run();
+		if (finalLastPrime != 0) {
+			log.info("Filtering primes starting from {}", finalLastPrime);
+			primes = primes.filter(n -> n > finalLastPrime);
+		}
+		if (isFirstFile) {
+			log.info("First time, truncating to one million");
+			primes = primes.takeWhile(n -> n < 1000000);
+		}
 		var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
 		log.info("Sieve completed in {}", time);
 
