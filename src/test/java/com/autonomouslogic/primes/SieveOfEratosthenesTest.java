@@ -1,100 +1,13 @@
 package com.autonomouslogic.primes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 public class SieveOfEratosthenesTest {
-	@ParameterizedTest
-	@MethodSource("addressingTests")
-	void shouldConvertNumbersToAddresses(long number, int address0, int address1) {
-		var address = new int[] {0, 0};
-		SieveOfEratosthenes.numberToAddress(number, address);
-		assertEquals(address0, address[0]);
-		assertEquals(address1, address[1]);
-	}
-
-	@ParameterizedTest
-	@MethodSource("addressingTests")
-	void shouldConvertAddressesToNumbers(long number, int address0, int address1) {
-		var address = new int[] {address0, address1};
-		assertEquals(number, SieveOfEratosthenes.addressToNumber(address));
-	}
-
-	static Stream<Arguments> addressingTests() {
-		return Stream.of(
-				Arguments.of(3, 0, 0),
-				Arguments.of(5, 0, 1),
-				Arguments.of(17, 0, 7),
-				Arguments.of(129, 0, 63),
-				Arguments.of(131, 1, 0),
-				Arguments.of(145, 1, 7),
-				Arguments.of(257, 1, 63),
-				Arguments.of(259, 2, 0),
-				Arguments.of(273, 2, 7),
-				Arguments.of(385, 2, 63));
-	}
-
-	@Test
-	void shouldReturnMaxNumber() {
-		assertEquals(129L, new SieveOfEratosthenes(1).maxNumber());
-		assertEquals(257L, new SieveOfEratosthenes(2).maxNumber());
-	}
-
-	@Test
-	void shouldConstructForMaxNumber() {
-		assertEquals(129L, SieveOfEratosthenes.forMaxNumber(129L).maxNumber());
-		assertEquals(257L, SieveOfEratosthenes.forMaxNumber(257L).maxNumber());
-	}
-
-	@ParameterizedTest
-	@MethodSource("bitFieldTests")
-	void shouldSetBitsInBitFields(int i, int j) {
-		var field = new long[2];
-		SieveOfEratosthenes.setIsNotPrime(new int[] {i, j}, field);
-		for (int p = 0; p < 2; p++) {
-			for (int q = 0; q < 64; q++) {
-				if (i == p && j == q) {
-					assertFalse(SieveOfEratosthenes.isPrime(new int[] {p, q}, field), i + "," + j + "-" + p + "," + q);
-				} else {
-					assertTrue(SieveOfEratosthenes.isPrime(new int[] {p, q}, field), i + "," + j + "-" + p + "," + q);
-				}
-			}
-		}
-	}
-
-	static List<Arguments> bitFieldTests() {
-		var tests = new ArrayList<Arguments>();
-		for (int i = 0; i < 2; i++) {
-			for (int j = 0; j < 64; j++) {
-				tests.add(Arguments.of(i, j));
-			}
-		}
-		return tests;
-	}
-
-	@Test
-	void shouldSieveKnownPrimes() {
-		var expectedPrimes = Arrays.stream(PrimeList.PRIMES).boxed().toList();
-		var lastExpectedPrime = expectedPrimes.getLast();
-		var sieve = SieveOfEratosthenes.forMaxNumber(lastExpectedPrime);
-		var primes = sieve.run().filter(p -> p <= lastExpectedPrime).boxed().toList();
-		assertEquals(
-				expectedPrimes.stream().map(String::valueOf).collect(Collectors.joining("\n")),
-				primes.stream().map(String::valueOf).collect(Collectors.joining("\n")));
-	}
-
 	@Test
 	void shouldSieve() {
 		var primes = new SieveOfEratosthenes(16 << 10).run();
@@ -105,12 +18,35 @@ public class SieveOfEratosthenesTest {
 	}
 
 	@Test
-	@Disabled
-	void run() {
+	void shouldSieveKnownPrimes() {
+		var expectedPrimes = Arrays.stream(PrimeList.PRIMES).boxed().toList();
+		var lastExpectedPrime = expectedPrimes.getLast();
 		var sieve = new SieveOfEratosthenes(1 << 20);
-		System.out.println(sieve.maxNumber());
-		var primes = sieve.run();
-		//		System.out.println(primes.size());
-		//		System.out.println(primes.getLast());
+		assertTrue(sieve.getLastNumber() >= lastExpectedPrime);
+		var primes = sieve.run().takeWhile(p -> p <= lastExpectedPrime).boxed().toList();
+		assertEquals(
+				expectedPrimes.stream().map(String::valueOf).collect(Collectors.joining("\n")),
+				primes.stream().map(String::valueOf).collect(Collectors.joining("\n")));
+	}
+
+	@Test
+	void shouldSieveKnownPrimesWithInitialList() {
+		var offset = 900;
+		var expectedPrimes = Arrays.stream(PrimeList.PRIMES).boxed().toList();
+		var lastExpectedPrime = expectedPrimes.getLast();
+
+		var initPrimes =
+				Arrays.stream(PrimeList.PRIMES).takeWhile(n -> n < offset).asLongStream();
+		var sieve = new SieveOfEratosthenes(offset, 1 << 20);
+		assertTrue(sieve.getLastNumber() >= lastExpectedPrime);
+		sieve.init(initPrimes);
+
+		var primes = sieve.run().takeWhile(p -> p <= lastExpectedPrime).boxed().toList();
+		assertEquals(
+				expectedPrimes.stream()
+						.filter(n -> n >= offset)
+						.map(String::valueOf)
+						.collect(Collectors.joining("\n")),
+				primes.stream().map(String::valueOf).collect(Collectors.joining("\n")));
 	}
 }

@@ -3,9 +3,9 @@ package com.autonomouslogic.primes;
 import com.autonomouslogic.commons.config.Config;
 
 public class Configs {
-	public static final Config<Long> SIEVE_MEMORY_BYTES = Config.<Long>builder()
+	public static final Config<Integer> SIEVE_MEMORY_BYTES = Config.<Integer>builder()
 			.name("SIEVE_MEMORY_BYTES")
-			.type(Long.class)
-			.defaultValue(1L << 20)
+			.type(Integer.class)
+			.defaultValue(1 << 20)
 			.build();
 }
