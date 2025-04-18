@@ -36,7 +36,8 @@ public class IndexHtml {
 
 	private String header() {
 		var title = "Huge Lists of Prime Numbers";
-		return String.format("""
+		return String.format(
+				"""
 			<!DOCTYPE html>
 			<html lang="en">
 			<head>
@@ -66,7 +67,8 @@ public class IndexHtml {
 				This index is also available as <a href="primes.json">JSON</a>.
 			</p>
 			<hr/>
-			""",title,title,title,title);
+			""",
+				title, title, title, title);
 	}
 
 	private String table() {
