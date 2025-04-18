@@ -21,4 +21,10 @@ public class Configs {
 			.type(String.class)
 			.defaultValue("https://data.kennethjorgensen.com/primes")
 			.build();
+
+	public static final Config<String> S3_BASE_URL =
+			Config.<String>builder().name("S3_BASE_URL").type(String.class).build();
+
+	public static final Config<String> S3_ENDPOINT_URL =
+			Config.<String>builder().name("S3_ENDPOINT_URL").type(String.class).build();
 }

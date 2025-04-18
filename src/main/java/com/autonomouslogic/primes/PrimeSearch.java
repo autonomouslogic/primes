@@ -30,11 +30,14 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang3.StringUtils;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Log4j2
 public class PrimeSearch {
 	private static final File tmpDir = new File(new File(Configs.TMP_DIR.getRequired()), "primes");
-	private static final File metaFile = new File(tmpDir, "primes.json");
+	private static final File indexMetaFile = new File(tmpDir, "primes.json");
 
 	private static final ObjectMapper objectMapper = new ObjectMapper()
 			.registerModule(new JavaTimeModule())
@@ -75,6 +78,8 @@ public class PrimeSearch {
 		fileMeta.setChecksums(createChecksums(primeFile));
 		indexMeta.setUpdated(currentTime).getPrimeFiles().add(fileMeta);
 		writeIndexMeta();
+		upload(primeFile, primeFile.getPath().endsWith(".xz") ? S3Meta.PRIME_FILE_XZ : S3Meta.PRIME_FILE_PLAIN);
+		upload(indexMetaFile, S3Meta.INDEX_FILE);
 	}
 
 	private void initTmpDir() {
@@ -87,8 +92,8 @@ public class PrimeSearch {
 	}
 
 	private void initMeta() throws IOException {
-		indexMeta = metaFile.exists()
-				? objectMapper.readValue(metaFile, IndexMeta.class)
+		indexMeta = indexMetaFile.exists()
+				? objectMapper.readValue(indexMetaFile, IndexMeta.class)
 				: new IndexMeta().setPrimeFiles(new ArrayList<>());
 		isFirstFile = indexMeta.getPrimeFiles().isEmpty();
 	}
@@ -198,7 +203,34 @@ public class PrimeSearch {
 	}
 
 	private void writeIndexMeta() throws IOException {
-		objectMapper.writerWithDefaultPrettyPrinter().writeValue(metaFile, indexMeta);
+		objectMapper.writerWithDefaultPrettyPrinter().writeValue(indexMetaFile, indexMeta);
+	}
+
+	private void upload(File file, S3Meta s3Meta) {
+		if (Configs.S3_BASE_URL.get().isEmpty()) {
+			log.info("S3_BASE_URL not set, skipping upload");
+			return;
+		}
+		var baseUri = URI.create(Configs.S3_BASE_URL.getRequired());
+		if (!baseUri.getScheme().equals("s3")) {
+			throw new RuntimeException(baseUri + " is not an S3 URL");
+		}
+		var url = baseUri.resolve(file.getName());
+		log.info("Uploading {} to {} with meta {}", file, url, s3Meta);
+
+		var req = PutObjectRequest.builder()
+				.bucket(url.getHost())
+				.key(StringUtils.stripStart(url.getPath(), "/"))
+				.contentType(s3Meta.getContentType())
+				.cacheControl(s3Meta.getCacheControl())
+				.build();
+
+		var clientBuilder = S3Client.builder();
+		Configs.S3_ENDPOINT_URL.get().ifPresent(endpointUrl -> clientBuilder.endpointOverride(URI.create(endpointUrl)));
+		var client = clientBuilder.build();
+
+		var res = client.putObject(req, file.toPath());
+		log.info("{}/{} uploaded with version {}", req.bucket(), req.key(), res.versionId());
 	}
 
 	public static void main(String[] args) {
