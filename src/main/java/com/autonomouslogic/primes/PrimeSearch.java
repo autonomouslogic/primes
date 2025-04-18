@@ -37,7 +37,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 @Log4j2
 public class PrimeSearch {
 	private static final File tmpDir = new File(new File(Configs.TMP_DIR.getRequired()), "primes");
-	private static final File indexMetaFile = new File(tmpDir, "primes.json");
+	private static final File indexJsonFile = new File(tmpDir, "primes.json");
+	private static final File indexHtmlFile = new File(tmpDir, "primes.html");
 
 	private static final ObjectMapper objectMapper = new ObjectMapper()
 			.registerModule(new JavaTimeModule())
@@ -77,9 +78,11 @@ public class PrimeSearch {
 		fileMeta.setUrl(Configs.HTTP_BASE_PATH.getRequired() + "/" + primeFile.getName());
 		fileMeta.setChecksums(createChecksums(primeFile));
 		indexMeta.setUpdated(currentTime).getPrimeFiles().add(fileMeta);
-		writeIndexMeta();
+		writeIndexJson();
+		writeIndexHtml();
 		upload(primeFile, primeFile.getPath().endsWith(".xz") ? S3Meta.PRIME_FILE_XZ : S3Meta.PRIME_FILE_PLAIN);
-		upload(indexMetaFile, S3Meta.INDEX_FILE);
+		upload(indexJsonFile, S3Meta.INDEX_JSON);
+		upload(indexHtmlFile, S3Meta.INDEX_HTML);
 	}
 
 	private void initTmpDir() {
@@ -92,8 +95,8 @@ public class PrimeSearch {
 	}
 
 	private void initMeta() throws IOException {
-		indexMeta = indexMetaFile.exists()
-				? objectMapper.readValue(indexMetaFile, IndexMeta.class)
+		indexMeta = indexJsonFile.exists()
+				? objectMapper.readValue(indexJsonFile, IndexMeta.class)
 				: new IndexMeta().setPrimeFiles(new ArrayList<>());
 		isFirstFile = indexMeta.getPrimeFiles().isEmpty();
 	}
@@ -205,8 +208,13 @@ public class PrimeSearch {
 		}
 	}
 
-	private void writeIndexMeta() throws IOException {
-		objectMapper.writerWithDefaultPrettyPrinter().writeValue(indexMetaFile, indexMeta);
+	private void writeIndexJson() throws IOException {
+		objectMapper.writerWithDefaultPrettyPrinter().writeValue(indexJsonFile, indexMeta);
+	}
+
+	private void writeIndexHtml() {
+		log.info("Rendering HTML index to {}", indexHtmlFile);
+		new IndexHtml(indexMeta).generate(indexHtmlFile);
 	}
 
 	private void upload(File file, S3Meta s3Meta) {
