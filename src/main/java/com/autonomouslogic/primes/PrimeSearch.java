@@ -33,7 +33,9 @@ import org.apache.commons.io.output.NullOutputStream;
 
 @Log4j2
 public class PrimeSearch {
-	private static final File metaFile = new File("/tmp/primes.json");
+	private static final File tmpDir = new File(new File(Configs.TMP_DIR.getRequired()), "primes");
+	private static final File metaFile = new File(tmpDir, "primes.json");
+
 	private static final ObjectMapper objectMapper = new ObjectMapper()
 			.registerModule(new JavaTimeModule())
 			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -53,21 +55,35 @@ public class PrimeSearch {
 
 	@SneakyThrows
 	private void run() {
+		initTmpDir();
 		initMeta();
 		createSieve();
 		if (!isFirstFile) {
 			initSieve();
 		}
 		var primes = runSieve();
+		if (isFirstFile) {
+			log.info("First file, truncating to one million");
+			primes = primes.filter(n -> n < 1_000_000);
+		}
 		fileMeta = new PrimeFileMeta().setCreated(currentTime);
 		var primeFile = writePrimeFile(primes);
 		if (!isFirstFile) {
 			primeFile = compressFile(primeFile);
 		}
-		fileMeta.setUrl("https://data.kennethjorgensen.com/primes/" + primeFile.getName());
+		fileMeta.setUrl(Configs.HTTP_BASE_PATH.getRequired() + "/" + primeFile.getName());
 		fileMeta.setChecksums(createChecksums(primeFile));
 		indexMeta.setUpdated(currentTime).getPrimeFiles().add(fileMeta);
 		writeIndexMeta();
+	}
+
+	private void initTmpDir() {
+		if (!tmpDir.exists()) {
+			log.info("Creating tmp dir: {}", tmpDir);
+			if (!tmpDir.mkdirs()) {
+				throw new RuntimeException("Failed to create tmp dir: " + tmpDir);
+			}
+		}
 	}
 
 	private void initMeta() throws IOException {
@@ -92,7 +108,7 @@ public class PrimeSearch {
 	@SneakyThrows
 	private void initSieve() {
 		for (var primeFile : indexMeta.getPrimeFiles()) {
-			var file = new File("/tmp", new File(URI.create(primeFile.getUrl()).getPath()).getName());
+			var file = new File(tmpDir, new File(URI.create(primeFile.getUrl()).getPath()).getName());
 			log.info("Initialising sieve from {}", file);
 			try (var fin = new FileInputStream(file)) {
 				InputStream in = fin;
@@ -108,6 +124,7 @@ public class PrimeSearch {
 
 	private LongStream runSieve() {
 		var start = Instant.now();
+		log.info("Running sieve");
 		var primes = sieve.run();
 		var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
 		log.info("Sieve completed in {}", time);
@@ -116,17 +133,14 @@ public class PrimeSearch {
 			log.info("Filtering primes starting from {}", lastPrime);
 			primes = primes.filter(n -> n > lastPrime);
 		}
-		if (isFirstFile) {
-			log.info("First file, truncating to one million");
-			primes = primes.filter(n -> n < 1000000);
-		}
 		return primes;
 	}
 
 	@SneakyThrows
 	private File writePrimeFile(LongStream primes) {
 		var primeFile = new File(
-				String.format("/tmp/primes-%02d.txt", indexMeta.getPrimeFiles().size()));
+				tmpDir,
+				String.format("primes-%02d.txt", indexMeta.getPrimeFiles().size()));
 		log.info("Writing primes to {}", primeFile);
 		long n = 0;
 		try (var out = new FileWriter(primeFile, StandardCharsets.UTF_8)) {
