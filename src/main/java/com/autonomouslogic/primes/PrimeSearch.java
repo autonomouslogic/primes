@@ -115,9 +115,19 @@ public class PrimeSearch {
 
 	@SneakyThrows
 	private void initSieve() {
+		var lastCheck = sieve.getLastCheck();
 		for (var primeFile : indexMeta.getPrimeFiles()) {
+			var filename = new File(URI.create(primeFile.getUrl()).getPath()).getName();
+			if (primeFile.getFirstPrime() > lastCheck) {
+				log.info(
+						"Skipping {} as first prime {} is larger than last check {}",
+						filename,
+						primeFile.getFirstPrime(),
+						lastCheck);
+				continue;
+			}
 			var start = Instant.now();
-			var file = new File(tmpDir, new File(URI.create(primeFile.getUrl()).getPath()).getName());
+			var file = new File(tmpDir, filename);
 			log.info("Initialising sieve from {}", file);
 			try (var fin = new FileInputStream(file)) {
 				InputStream in = fin;

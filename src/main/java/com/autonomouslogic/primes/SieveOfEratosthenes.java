@@ -47,7 +47,7 @@ public class SieveOfEratosthenes {
 		return primeBits.primeStream();
 	}
 
-	private long getLastCheck() {
+	public long getLastCheck() {
 		return (long) Math.sqrt(getLastNumber()) + 1;
 	}
 
