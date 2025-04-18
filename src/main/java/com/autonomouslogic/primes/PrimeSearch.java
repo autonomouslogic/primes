@@ -113,6 +113,7 @@ public class PrimeSearch {
 	@SneakyThrows
 	private void initSieve() {
 		for (var primeFile : indexMeta.getPrimeFiles()) {
+			var start = Instant.now();
 			var file = new File(tmpDir, new File(URI.create(primeFile.getUrl()).getPath()).getName());
 			log.info("Initialising sieve from {}", file);
 			try (var fin = new FileInputStream(file)) {
@@ -124,6 +125,8 @@ public class PrimeSearch {
 				var stream = reader.lines().filter(s -> !s.isEmpty()).mapToLong(Long::valueOf);
 				sieve.init(stream);
 			}
+			var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
+			log.info("File initialisation complete in {}", time);
 		}
 	}
 

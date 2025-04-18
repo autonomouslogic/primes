@@ -1,5 +1,8 @@
 # Prime Search
-Search for primes
+Search for primes.
+
+[All primes below one million](https://data.kennethjorgensen.com/primes/primes-00.txt)
+and [more primes](http://data.kennethjorgensen.com/primes/primes.json),
 
 ## Resources
 
