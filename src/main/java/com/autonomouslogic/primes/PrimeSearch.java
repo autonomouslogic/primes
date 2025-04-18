@@ -61,6 +61,10 @@ public class PrimeSearch {
 	private void run() {
 		initTmpDir();
 		initMeta();
+		if (!isFirstFile && indexMeta.getPrimeFiles().size() >= 100) {
+			log.info("File limit reached");
+			return;
+		}
 		createSieve();
 		if (!isFirstFile) {
 			initSieve();
