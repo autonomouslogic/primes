@@ -78,9 +78,9 @@ public class PrimeSearch {
 		fileMeta.setUrl(Configs.HTTP_BASE_PATH.getRequired() + "/" + primeFile.getName());
 		fileMeta.setChecksums(createChecksums(primeFile));
 		indexMeta.setUpdated(currentTime).getPrimeFiles().add(fileMeta);
+		upload(primeFile, primeFile.getPath().endsWith(".xz") ? S3Meta.PRIME_FILE_XZ : S3Meta.PRIME_FILE_PLAIN);
 		writeIndexJson();
 		writeIndexHtml();
-		upload(primeFile, primeFile.getPath().endsWith(".xz") ? S3Meta.PRIME_FILE_XZ : S3Meta.PRIME_FILE_PLAIN);
 		upload(indexJsonFile, S3Meta.INDEX_JSON);
 		upload(indexHtmlFile, S3Meta.INDEX_HTML);
 	}
