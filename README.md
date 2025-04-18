@@ -1,7 +1,12 @@
 # Prime Search
-Search for primes
+Search for primes.
+
+[All primes below one million](https://data.kennethjorgensen.com/primes/primes-00.txt)
+and [more primes](http://data.kennethjorgensen.com/primes/primes.json),
 
 ## Resources
 
-* [https://t5k.org/](The PrimePages: prime number research & records)
-* [https://www.rsok.com/~jrm/](Prime Numbers and Other Interesting Things)
+* [Primality test](https://en.wikipedia.org/wiki/Primality_test) - wikipedia.org
+* [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) - wikipedia.org
+* [The PrimePages: prime number research & records](https://t5k.org/) - t5k.org
+* [Prime Numbers and Other Interesting Things](https://www.rsok.com/~jrm/) - rsok.com
