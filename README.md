@@ -11,3 +11,4 @@ and [more primes](https://data.kennethjorgensen.com/primes/primes.html),
 * [The PrimePages: prime number research & records](https://t5k.org/) - t5k.org
 * [Prime Numbers and Other Interesting Things](https://www.rsok.com/~jrm/) - rsok.com
 * [prime-numbers.de](https://prime-numbers.de/)
+* [Prime I.T.](http://compoasso.free.fr/primelistweb/page/prime/accueil_en.php)
