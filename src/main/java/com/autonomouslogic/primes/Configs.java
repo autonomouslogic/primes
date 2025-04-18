@@ -7,7 +7,8 @@ public class Configs {
 	public static final Config<Integer> SIEVE_MEMORY_BYTES = Config.<Integer>builder()
 			.name("SIEVE_MEMORY_BYTES")
 			.type(Integer.class)
-			.defaultValue(128 << 20) // 128 MiB produces files around 2 GiB uncompressed and 200 MiB compressed
+			// .defaultValue(128 << 20) // 128 MiB produces files around 2 GiB uncompressed and 200 MiB compressed
+			.defaultValue(192 << 20) // 192 MiB produces files around 2.8 GiB uncompressed and 230 MiB compressed
 			.build();
 
 	public static final Config<String> TMP_DIR = Config.<String>builder()
