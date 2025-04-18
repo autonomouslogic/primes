@@ -2,7 +2,7 @@
 Search for primes.
 
 [All primes below one million](https://data.kennethjorgensen.com/primes/primes-00.txt)
-and [more primes](http://data.kennethjorgensen.com/primes/primes.json),
+and [more primes](https://data.kennethjorgensen.com/primes/primes.html),
 
 ## Resources
 
