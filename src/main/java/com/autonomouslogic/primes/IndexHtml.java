@@ -35,16 +35,17 @@ public class IndexHtml {
 	}
 
 	private String header() {
-		return """
+		var title = "Huge Lists of Prime Numbers";
+		return String.format("""
 			<!DOCTYPE html>
 			<html lang="en">
 			<head>
-				<script data-goatcounter="https://everef-data.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-				<title>Prime Numbers - data.kennethjorgensen.com</title>
+				<script data-goatcounter="https://kennethjorgensen-data.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+				<title>%s - data.kennethjorgensen.com</title>
 				<meta charset="utf-8">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-				<meta property="og:title" content="Prime Numbers - data.kennethjorgensen.com">
-				<meta property="twitter:title" content="Prime Numbers - data.kennethjorgensen.com">
+				<meta property="og:title" content="%s - data.kennethjorgensen.com">
+				<meta property="twitter:title" content="%s - data.kennethjorgensen.com">
 				<style>
 					.text-right { text-align: right; }
 					.text-left { text-align: left; }
@@ -53,8 +54,19 @@ public class IndexHtml {
 				</style>
 			</head>
 			<body>
-			<h1>Prime Numbers</h1>
-			""";
+			<h1>%s</h1>
+			<p>
+				The files in the table below contain lists of prime numbers.
+				The first file is uncompressed to provide an easy example of the format, which is just one number per line.
+				The rest are xz compressed.
+				On Windows, 7-Zip should be able to decompress them.
+				See <a href="https://github.com/autonomouslogic/primes">this repo</a> for details on how they're calculated.
+			</p>
+			<p>
+				This index is also available as <a href="primes.json">JSON</a>.
+			</p>
+			<hr/>
+			""",title,title,title,title);
 	}
 
 	private String table() {
@@ -130,11 +142,6 @@ public class IndexHtml {
 
 	private String footer() {
 		return """
-			<hr/>
-			<p>
-				<a href="primes.json">View JSON</a>
-				<a href="https://github.com/autonomouslogic/primes">Source Code</a>
-			</p>
 			</body>
 			</html>
 			""";
