@@ -193,7 +193,7 @@ public class PrimeSearch {
 	private File compressFile(File primeFile) {
 		var start = Instant.now();
 		log.info("Compressing {}", primeFile);
-		var xz = new ProcessBuilder("xz", primeFile.getPath()).start();
+		var xz = new ProcessBuilder("xz", "-T", "0", primeFile.getPath()).start();
 		var exit = xz.waitFor();
 		if (exit != 0) {
 			throw new RuntimeException("XZ failed: " + exit);
