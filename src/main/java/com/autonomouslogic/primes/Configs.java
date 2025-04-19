@@ -7,7 +7,7 @@ public class Configs {
 	public static final Config<Integer> SIEVE_MEMORY_BYTES = Config.<Integer>builder()
 			.name("SIEVE_MEMORY_BYTES")
 			.type(Integer.class)
-			.defaultValue(250 << 20)
+			.defaultValue(PrimeBitSet.MAX_MEMORY)
 			.build();
 
 	public static final Config<String> TMP_DIR = Config.<String>builder()

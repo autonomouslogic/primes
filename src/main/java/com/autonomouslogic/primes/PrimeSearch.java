@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Log4j2
 public class PrimeSearch {
-	private static final File tmpDir = new File(new File(Configs.TMP_DIR.getRequired()), "primes");
+	private static final File tmpDir = new File(Configs.TMP_DIR.getRequired());
 	private static final File indexJsonFile = new File(tmpDir, "primes.json");
 	private static final File indexHtmlFile = new File(tmpDir, "primes.html");
 
@@ -61,8 +61,8 @@ public class PrimeSearch {
 	private void run() {
 		initTmpDir();
 		initMeta();
-		if (!isFirstFile && indexMeta.getPrimeFiles().size() >= 100) {
-			log.info("File limit reached");
+		if (!isFirstFile && indexMeta.getPrimeFiles().getLast().getLastPrime() >= 1e12) {
+			log.info("One trillion reached");
 			return;
 		}
 		createSieve();
@@ -112,7 +112,7 @@ public class PrimeSearch {
 			offset = lastPrime - (lastPrime % 30);
 			log.info("Previous files detected, using offset {} and lastPrime {}", offset, lastPrime);
 		}
-		var memory = Configs.SIEVE_MEMORY_BYTES.getRequired();
+		var memory = isFirstFile ? 128 << 10 : Configs.SIEVE_MEMORY_BYTES.getRequired();
 		log.info(String.format("Preparing search with %.2f MiB of memory", memory / (double) (1 << 20)));
 		sieve = new SieveOfEratosthenes(offset, memory);
 	}
@@ -165,7 +165,7 @@ public class PrimeSearch {
 	private File writePrimeFile(LongStream primes) {
 		var primeFile = new File(
 				tmpDir,
-				String.format("primes-%02d.txt", indexMeta.getPrimeFiles().size()));
+				String.format("primes-%03d.txt", indexMeta.getPrimeFiles().size()));
 		log.info("Writing primes to {}", primeFile);
 		long n = 0;
 		try (var out = new FileWriter(primeFile, StandardCharsets.UTF_8)) {

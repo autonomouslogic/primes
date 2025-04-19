@@ -10,10 +10,11 @@ import lombok.Getter;
  * Code based on <a href="https://www.rsok.com/~jrm/printprimes.html">Some Prime Numbers</a>.
  */
 public class PrimeBitSet {
+	public static final int MAX_MEMORY = Integer.MAX_VALUE / Byte.SIZE;
+
 	private static final long[] FIRST_PRIMES = new long[] {2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
 	private static final int NUMBERS_PER_BYTE = 30;
 	private static final int[] OFFSETS = new int[] {1, 7, 11, 13, 17, 19, 23, 29};
-	private static final int MAX_MEMORY = Integer.MAX_VALUE / Byte.SIZE;
 
 	@Getter
 	private final long firstNumber;

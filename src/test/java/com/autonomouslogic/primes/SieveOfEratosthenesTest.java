@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class SieveOfEratosthenesTest {
@@ -58,5 +61,13 @@ public class SieveOfEratosthenesTest {
 		secondSieve.init(firstSieve.run());
 		var lastPrime = secondSieve.run().max().getAsLong();
 		assertTrue(new TrialDivision().isPrime(lastPrime), String.valueOf(lastPrime));
+	}
+
+	@Test
+	@Disabled
+	void shouldSieveLargePrimes() {
+		var sieve = new SieveOfEratosthenes(PrimeBitSet.MAX_MEMORY);
+		var max = sieve.run().max().getAsLong();
+		assertTrue(new TrialDivision().isPrime(max), String.valueOf(max));
 	}
 }
