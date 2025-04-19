@@ -66,6 +66,9 @@ public class IndexHtml {
 			<p>
 				This index is also available as <a href="primes.json">JSON</a>.
 			</p>
+			<p>
+				Created by <a href="https://kennethjorgensen.com/">Kenneth J&oslash;rgensen</a>.
+			</p>
 			<hr/>
 			""",
 				title, title, title, title);
