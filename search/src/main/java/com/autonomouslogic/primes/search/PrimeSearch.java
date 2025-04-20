@@ -1,8 +1,10 @@
-package com.autonomouslogic.primes;
+package com.autonomouslogic.primes.search;
 
-import com.autonomouslogic.primes.meta.ChecksumsMeta;
-import com.autonomouslogic.primes.meta.IndexMeta;
-import com.autonomouslogic.primes.meta.PrimeFileMeta;
+import com.autonomouslogic.primes.SieveOfEratosthenes;
+import com.autonomouslogic.primes.TrialDivision;
+import com.autonomouslogic.primes.search.meta.ChecksumsMeta;
+import com.autonomouslogic.primes.search.meta.IndexMeta;
+import com.autonomouslogic.primes.search.meta.PrimeFileMeta;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

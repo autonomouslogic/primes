@@ -10,4 +10,4 @@ clean:
 	./gradlew clean --stacktrace
 
 prime-search:
-	./gradlew primeSearch --stacktrace
+	./gradlew search:run --stacktrace

@@ -1,7 +1,7 @@
-package com.autonomouslogic.primes;
+package com.autonomouslogic.primes.search;
 
-import com.autonomouslogic.primes.meta.IndexMeta;
-import com.autonomouslogic.primes.meta.PrimeFileMeta;
+import com.autonomouslogic.primes.search.meta.IndexMeta;
+import com.autonomouslogic.primes.search.meta.PrimeFileMeta;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.StringReader;

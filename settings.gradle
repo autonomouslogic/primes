@@ -1,2 +1,3 @@
 rootProject.name = 'primes'
+include 'search'
 

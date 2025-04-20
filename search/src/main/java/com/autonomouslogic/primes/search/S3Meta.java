@@ -1,4 +1,4 @@
-package com.autonomouslogic.primes;
+package com.autonomouslogic.primes.search;
 
 import java.time.Duration;
 import lombok.Builder;
