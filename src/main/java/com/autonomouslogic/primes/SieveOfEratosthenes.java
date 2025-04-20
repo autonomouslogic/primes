@@ -48,7 +48,7 @@ public class SieveOfEratosthenes {
 	}
 
 	public long getLastCheck() {
-		return (long) Math.sqrt(getLastNumber()) + 1;
+		return PrimeUtils.maxRequiredCheck(getLastNumber());
 	}
 
 	public long getFirstNumber() {

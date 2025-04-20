@@ -60,13 +60,3 @@ spotless {
 wrapper {
 	distributionType = "ALL"
 }
-
-tasks.register('primeSearch', JavaExec) {
-	group "application"
-	environment envProperties
-	classpath = sourceSets.main.runtimeClasspath
-	mainClass = "com.autonomouslogic.primes.PrimeSearch"
-	jvmArgs = [
-			"-Xmx20G",
-	]
-}
