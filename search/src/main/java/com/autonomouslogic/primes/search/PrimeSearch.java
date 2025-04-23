@@ -191,7 +191,6 @@ public class PrimeSearch {
 
 				if (isFirstFile) {
 					out.flush();
-					log.info(counting.getByteCount());
 					if (counting.getByteCount() > firstTargetFileSize) {
 						break;
 					}
