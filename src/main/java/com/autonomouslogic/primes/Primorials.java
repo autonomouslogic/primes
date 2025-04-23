@@ -59,7 +59,7 @@ public class Primorials {
 
 		/**
 		 * The coprime offsets which when added to multiples of the product are not divisible by any of the primes
-		 * below <code>c</code>.
+		 * less than or equal to <code>c</code>.
 		 */
 		long[] coprimeOffsets;
 
@@ -157,7 +157,7 @@ public class Primorials {
 			var offsetsLen = order.getCoprimeOffsets().length;
 			var space = 100.0 * offsetsLen / order.getProduct();
 			System.out.printf(
-					"Order %d, c=%d, k=%d, %d offsets, %.1f%% space%n",
+					"Order %d: c=%d, product=%d, %d coprime offsets, %.1f%% space%n",
 					order.getN(), order.getC(), order.getProduct(), offsetsLen, space);
 		}
 	}
