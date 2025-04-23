@@ -58,6 +58,7 @@ public class PrimorialsTest {
 				.mapToObj(String::valueOf)
 				.collect(Collectors.joining("\n"));
 		var actual = Primorials.allPossiblePrimes()
+				.peek(n -> System.out.println(n))
 				.takeWhile(n -> n <= 200)
 				.mapToObj(String::valueOf)
 				.collect(Collectors.joining("\n"));
@@ -96,5 +97,11 @@ public class PrimorialsTest {
 				Arguments.of(3, 30),
 				Arguments.of(4, 210),
 				Arguments.of(5, 2310));
+	}
+
+	@Test
+	void speedTest() {
+		var sum = Primorials.allPossiblePrimes().takeWhile(n -> n < 104729).sum();
+		assertEquals(1058956954, sum);
 	}
 }

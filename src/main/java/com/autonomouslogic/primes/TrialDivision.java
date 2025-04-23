@@ -14,22 +14,23 @@ public class TrialDivision implements PrimalityTest {
 		if (number % 2 == 0) {
 			return false;
 		}
-		for (int n = 3; n <= maxCheck; n += 2) {
-			if (number % n == 0) {
-				return false;
-			}
-		}
-
-		//		var iterator = Primorials.allPossiblePrimes().iterator();
-		//		while (iterator.hasNext()) {
-		//			var n = iterator.next();
-		//			if (n > maxCheck) {
-		//				break;
-		//			}
+		//		for (int n = 3; n <= maxCheck; n += 2) {
 		//			if (number % n == 0) {
 		//				return false;
 		//			}
 		//		}
+
+		var iterator = Primorials.allPossiblePrimes().iterator();
+		while (iterator.hasNext()) {
+			var n = iterator.next();
+			System.out.println("n=" + n);
+			if (n > maxCheck) {
+				break;
+			}
+			if (number % n == 0) {
+				return false;
+			}
+		}
 
 		return true;
 

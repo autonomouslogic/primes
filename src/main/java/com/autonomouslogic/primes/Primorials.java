@@ -39,6 +39,13 @@ import lombok.Value;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Primorials {
+	/**
+	 * The maximum order that will be cached and used in {@link #allPossiblePrimes(long)}.
+	 */
+	private static final int MAX_ORDER = 3;
+
+	private static final Order[] ORDER_CACHE = new Order[MAX_ORDER + 1];
+
 	@Value
 	@AllArgsConstructor(access = AccessLevel.PROTECTED)
 	public static class Order {
@@ -96,6 +103,10 @@ public class Primorials {
 	 * @return
 	 */
 	public static Primorials.Order ofOrderWithCoprimes(int n) {
+		if (n <= MAX_ORDER && ORDER_CACHE[n] != null) {
+			return ORDER_CACHE[n];
+		}
+
 		var primes = Arrays.stream(PrimeList.PRIMES).limit(n).toArray();
 		long product = 1;
 		for (int prime : primes) {
@@ -114,7 +125,11 @@ public class Primorials {
 				.map(num -> num - finalProduct)
 				.toArray();
 		var c = primes.length == 0 ? 1 : primes[primes.length - 1];
-		return new Primorials.Order(n, c, product, offsets);
+		var order = new Primorials.Order(n, c, product, offsets);
+		if (n <= MAX_ORDER) {
+			ORDER_CACHE[n] = order;
+		}
+		return order;
 	}
 
 	/**
@@ -135,11 +150,11 @@ public class Primorials {
 		if (from < 2) {
 			throw new IllegalArgumentException("from must be at least 2");
 		}
-		var mainStream = IntStream.rangeClosed(1, 8)
+		var mainStream = IntStream.rangeClosed(1, MAX_ORDER)
 				.mapToObj(Primorials::ofOrderWithCoprimes)
 				.filter(o -> ofOrder(o.getN() + 1) >= from)
 				.flatMapToLong(order -> {
-					if (order.getProduct() == 8) {
+					if (order.getN() == MAX_ORDER) {
 						return order.possiblePrimes();
 					}
 					var nextK = ofOrder(order.getN() + 1);
