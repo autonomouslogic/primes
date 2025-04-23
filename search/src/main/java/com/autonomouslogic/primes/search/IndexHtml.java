@@ -61,7 +61,6 @@ public class IndexHtml {
 				The first file is uncompressed to provide an easy example of the format, which is just one number per line.
 				The rest are xz compressed.
 				On Windows, 7-Zip should be able to decompress them.
-				See <a href="https://github.com/autonomouslogic/primes">this repo</a> for details on how they're calculated.
 			</p>
 			<p>
 				This index is also available as <a href="primes.json">JSON</a>.
@@ -69,6 +68,7 @@ public class IndexHtml {
 			<p>
 				Created by <a href="https://kennethjorgensen.com/">Kenneth J&oslash;rgensen</a> using
 				a <a href="https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of Eratosthenes</a>.
+				<a href="https://github.com/autonomouslogic/primes">Source code</a> is available.
 			</p>
 			<hr/>
 			""",
