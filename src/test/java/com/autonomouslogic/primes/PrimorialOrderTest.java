@@ -17,10 +17,10 @@ public class PrimorialOrderTest {
 
 	public static Stream<Arguments> orderTests() {
 		return Stream.of(
-				Arguments.of(0, new PrimorialOrder(0, 1, new long[] {0})),
-				Arguments.of(1, new PrimorialOrder(1, 2, new long[] {1})),
-				Arguments.of(2, new PrimorialOrder(2, 6, new long[] {1, 5})),
-				Arguments.of(3, new PrimorialOrder(3, 30, new long[] {1, 7, 11, 13, 17, 19, 23, 29})));
+				Arguments.of(0, new PrimorialOrder(0, 1, 1, new long[] {0})),
+				Arguments.of(1, new PrimorialOrder(1, 2, 2, new long[] {1})),
+				Arguments.of(2, new PrimorialOrder(2, 3, 6, new long[] {1, 5})),
+				Arguments.of(3, new PrimorialOrder(3, 5, 30, new long[] {1, 7, 11, 13, 17, 19, 23, 29})));
 	}
 
 	@ParameterizedTest
@@ -29,7 +29,7 @@ public class PrimorialOrderTest {
 		assertEquals(
 				expected.toString(),
 				PrimorialOrder.ofOrder(order)
-						.getProbablePrimes()
+						.possiblePrimes()
 						.limit(expected.size())
 						.boxed()
 						.toList()
