@@ -135,7 +135,7 @@ public class Primorials {
 		if (from < 2) {
 			throw new IllegalArgumentException("from must be at least 2");
 		}
-		return IntStream.rangeClosed(1, 8)
+		var mainStream = IntStream.rangeClosed(1, 8)
 				.mapToObj(Primorials::ofOrderWithCoprimes)
 				.filter(o -> ofOrder(o.getN() + 1) >= from)
 				.flatMapToLong(order -> {
@@ -149,6 +149,11 @@ public class Primorials {
 					}
 					return stream;
 				});
+		if (from == 2) {
+			return LongStream.concat(LongStream.of(2), mainStream);
+		} else {
+			return mainStream;
+		}
 	}
 
 	public static void main(String[] args) {
