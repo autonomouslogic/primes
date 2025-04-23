@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class PrimorialsTest {
 	@ParameterizedTest
 	@MethodSource("orderTests")
-	void shouldCreateOrders(int order, Primorials.Order expected) {
+	void shouldCreateOrdersWithCoprimeOffsets(int order, Primorials.Order expected) {
 		assertEquals(expected, Primorials.ofOrderWithCoprimes(order));
 	}
 
@@ -80,13 +80,19 @@ public class PrimorialsTest {
 		assertEquals(expected, actual);
 	}
 
-	@Test
-	void shouldCalculatePrimorialOfOrder() {
-		assertEquals(1, Primorials.ofOrder(0));
-		assertEquals(2, Primorials.ofOrder(1));
-		assertEquals(6, Primorials.ofOrder(2));
-		assertEquals(30, Primorials.ofOrder(3));
-		assertEquals(210, Primorials.ofOrder(4));
-		assertEquals(2310, Primorials.ofOrder(5));
+	@ParameterizedTest
+	@MethodSource("primorialTests")
+	void shouldCalculatePrimorialOfOrder(int order, int expected) {
+		assertEquals(expected, Primorials.ofOrder(order));
+	}
+
+	public static Stream<Arguments> primorialTests() {
+		return Stream.of(
+				Arguments.of(0, 1),
+				Arguments.of(1, 2),
+				Arguments.of(2, 6),
+				Arguments.of(3, 30),
+				Arguments.of(4, 210),
+				Arguments.of(5, 2310));
 	}
 }
