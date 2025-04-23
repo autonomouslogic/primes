@@ -35,7 +35,7 @@ public class IndexHtml {
 	}
 
 	private String header() {
-		var title = "Huge Lists of Prime Numbers";
+		var title = "Huge List of Prime Numbers";
 		return String.format(
 				"""
 			<!DOCTYPE html>
