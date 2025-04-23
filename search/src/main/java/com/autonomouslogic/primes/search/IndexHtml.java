@@ -67,7 +67,8 @@ public class IndexHtml {
 				This index is also available as <a href="primes.json">JSON</a>.
 			</p>
 			<p>
-				Created by <a href="https://kennethjorgensen.com/">Kenneth J&oslash;rgensen</a>.
+				Created by <a href="https://kennethjorgensen.com/">Kenneth J&oslash;rgensen</a> using
+				a <a href="https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of Eratosthenes</a>.
 			</p>
 			<hr/>
 			""",
