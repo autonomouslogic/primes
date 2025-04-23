@@ -44,7 +44,7 @@ public class PrimeSearch {
 	private static final File indexJsonFile = new File(tmpDir, "primes.json");
 	private static final File indexHtmlFile = new File(tmpDir, "primes.html");
 
-	private static final long firstTargetFileSize = (long) Math.floor(Math.PI * (double) (100 << 10));
+	private static final long firstTargetFileSize = (long) (Math.round(Math.PI * 10000.0) / 100.0 * (1 << 10)) - 4;
 	private static final long targetFileSize = (long) Math.floor(Math.PI * (double) (1 << 30));
 	private static final long searchTarget = (long) 1e12;
 
@@ -70,7 +70,7 @@ public class PrimeSearch {
 		initTmpDir();
 		initMeta();
 		if (!isFirstFile && indexMeta.getPrimeFiles().getLast().getLastPrime() >= searchTarget) {
-			log.info("Target %d reached", searchTarget);
+			log.info("Target {} reached", searchTarget);
 			return;
 		}
 		createSieve();
@@ -189,14 +189,17 @@ public class PrimeSearch {
 				}
 				fileMeta.setLastPrime(prime);
 
-				n++;
 				if (isFirstFile) {
+					out.flush();
+					log.info(counting.getByteCount());
 					if (counting.getByteCount() > firstTargetFileSize) {
 						break;
 					}
 				} else if (counting.getByteCount() > targetFileSize) {
 					break;
 				}
+
+				n++;
 			}
 		}
 		fileMeta.setCount(n).setUncompressedSize(primeFile.length());
