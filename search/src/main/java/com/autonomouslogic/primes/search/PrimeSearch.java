@@ -13,13 +13,17 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.HashingOutputStream;
+
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -31,6 +35,7 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -41,6 +46,10 @@ public class PrimeSearch {
 	private static final File tmpDir = new File(Configs.TMP_DIR.getRequired());
 	private static final File indexJsonFile = new File(tmpDir, "primes.json");
 	private static final File indexHtmlFile = new File(tmpDir, "primes.html");
+
+	private static final long firstTargetFileSize = (long) Math.floor(Math.PI * (double) (100<<10));
+	private static final long targetFileSize = (long) Math.floor(Math.PI * (double) (1<<30));
+	private static final long searchTarget = (long) 1e12;
 
 	private static final ObjectMapper objectMapper = new ObjectMapper()
 			.registerModule(new JavaTimeModule())
@@ -63,8 +72,8 @@ public class PrimeSearch {
 	private void run() {
 		initTmpDir();
 		initMeta();
-		if (!isFirstFile && indexMeta.getPrimeFiles().getLast().getLastPrime() >= 1e12) {
-			log.info("One trillion reached");
+		if (!isFirstFile && indexMeta.getPrimeFiles().getLast().getLastPrime() >= searchTarget) {
+			log.info("Target %d reached", searchTarget);
 			return;
 		}
 		createSieve();
@@ -170,9 +179,9 @@ public class PrimeSearch {
 				String.format("primes-%03d.txt", indexMeta.getPrimeFiles().size()));
 		log.info("Writing primes to {}", primeFile);
 		long n = 0;
-		try (var out = new FileWriter(primeFile, StandardCharsets.UTF_8)) {
+		try (var counting = new CountingOutputStream(new BufferedOutputStream(new FileOutputStream(primeFile)));
+			var out = new OutputStreamWriter(counting, StandardCharsets.UTF_8)) {
 			var iterator = primes.iterator();
-			var trial = new TrialDivision();
 			while (iterator.hasNext()) {
 				var prime = iterator.next();
 				out.write(String.valueOf(prime));
@@ -184,6 +193,14 @@ public class PrimeSearch {
 				fileMeta.setLastPrime(prime);
 
 				n++;
+				if (isFirstFile) {
+					if (counting.getByteCount() > firstTargetFileSize) {
+						break;
+					}
+				}
+				else if (counting.getByteCount() > targetFileSize) {
+					break;
+				}
 			}
 		}
 		fileMeta.setCount(n).setUncompressedSize(primeFile.length());
