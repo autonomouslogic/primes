@@ -37,7 +37,7 @@ import lombok.Value;
  */
 @Value
 @AllArgsConstructor
-public class PrimorialOrder {
+public class Primorial {
 	int n;
 	int c;
 	long k;
@@ -72,7 +72,7 @@ public class PrimorialOrder {
 	 * @param n
 	 * @return
 	 */
-	public static PrimorialOrder ofOrder(int n) {
+	public static Primorial ofOrder(int n) {
 		var primes = Arrays.stream(PrimeList.PRIMES).limit(n).toArray();
 		long product = 1;
 		for (int prime : primes) {
@@ -91,7 +91,7 @@ public class PrimorialOrder {
 				.map(num -> num - finalProduct)
 				.toArray();
 		var c = primes.length == 0 ? 1 : primes[primes.length - 1];
-		return new PrimorialOrder(n, c, product, offsets);
+		return new Primorial(n, c, product, offsets);
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class PrimorialOrder {
 			throw new IllegalArgumentException("from must be at least 2");
 		}
 		return IntStream.rangeClosed(1, 8)
-				.mapToObj(PrimorialOrder::ofOrder)
+				.mapToObj(Primorial::ofOrder)
 				.filter(o -> primorialOfOrder(o.getN() + 1) >= from)
 				.flatMapToLong(order -> {
 					if (order.getK() == 8) {
@@ -129,7 +129,7 @@ public class PrimorialOrder {
 
 	public static void main(String[] args) {
 		for (int i = 0; i <= 9; i++) {
-			var order = PrimorialOrder.ofOrder(i);
+			var order = Primorial.ofOrder(i);
 			var offsetsLen = order.getIOffsets().length;
 			var space = 100.0 * offsetsLen / order.getK();
 			System.out.printf(
