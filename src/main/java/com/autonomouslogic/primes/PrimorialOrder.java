@@ -8,7 +8,7 @@ import lombok.Value;
 
 /**
  * <p>
- * An order of priomorial.
+ * An order of primorial.
  * Each order <code>n</code> is the primorial <code>p_n# = c#</code>.
  * Each order consists of the order <code>n</code>, the last prime <code>c</code>, the product <code>k</code>,
  * and all the coprime offsets <code>iOffsets</code> from <code>k</code>.
