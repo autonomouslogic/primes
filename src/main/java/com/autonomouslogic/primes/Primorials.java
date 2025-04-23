@@ -24,16 +24,16 @@ import lombok.Value;
  * <p>
  * The main function in this class summarises the orders with the output:
  * <pre>
- * Order 0: c=1, k=1, 1 offsets, 100.0% space
- * Order 1: c=2, k=2, 1 offsets, 50.0% space
- * Order 2: c=3, k=6, 2 offsets, 33.3% space
- * Order 3: c=5, k=30, 8 offsets, 26.7% space
- * Order 4: c=7, k=210, 48 offsets, 22.9% space
- * Order 5: c=11, k=2310, 480 offsets, 20.8% space
- * Order 6: c=13, k=30030, 5760 offsets, 19.2% space
- * Order 7: c=17, k=510510, 92160 offsets, 18.1% space
- * Order 8: c=19, k=9699690, 1658880 offsets, 17.1% space
- * Order 9: c=23, k=223092870, 36495360 offsets, 16.4% space
+ * Order 0: c=1, product=1, 1 coprime offsets, 100.0% space
+ * Order 1: c=2, product=2, 1 coprime offsets, 50.0% space
+ * Order 2: c=3, product=6, 2 coprime offsets, 33.3% space
+ * Order 3: c=5, product=30, 8 coprime offsets, 26.7% space
+ * Order 4: c=7, product=210, 48 coprime offsets, 22.9% space
+ * Order 5: c=11, product=2310, 480 coprime offsets, 20.8% space
+ * Order 6: c=13, product=30030, 5760 coprime offsets, 19.2% space
+ * Order 7: c=17, product=510510, 92160 coprime offsets, 18.1% space
+ * Order 8: c=19, product=9699690, 1658880 coprime offsets, 17.1% space
+ * Order 9: c=23, product=223092870, 36495360 coprime offsets, 16.4% space
  * </pre>
  * </p>
  */
