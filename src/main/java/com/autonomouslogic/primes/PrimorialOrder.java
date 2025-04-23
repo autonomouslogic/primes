@@ -1,6 +1,7 @@
 package com.autonomouslogic.primes;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import lombok.AllArgsConstructor;
 import lombok.Value;
@@ -8,7 +9,7 @@ import lombok.Value;
 /**
  * <p>
  * An order of priomorial.
- * Each order <code>n</code> is the primorial <code>p_n#</code>.
+ * Each order <code>n</code> is the primorial <code>p_n# = c#</code>.
  * Each order consists of the order <code>n</code>, the last prime <code>c</code>, the product <code>k</code>,
  * and all the coprime offsets <code>iOffsets</code> from <code>k</code>.
  * </p>
@@ -44,6 +45,12 @@ public class PrimorialOrder {
 
 	/**
 	 * Returns all possible primes associated with this order.
+	 * Each number returned is in the form <code>k + i</code> for each <code>i</code>.
+	 * For instance, order 1 will return all odd numbers.
+	 * Order 2 will first return 3 and 5, then 7 and 9, and so on.
+	 * Order 3 will first return 31, 37, 41, 43, 47, 49, 53, 59, then 61, 67, 71, 73, 77, 79, 83, 89, and so on.
+	 * Each order will return a higher start number, but the stream will contain less and less numbers.
+	 * This can be used when searching for prime numbers.
 	 * @return
 	 */
 	public LongStream possiblePrimes() {
@@ -52,30 +59,72 @@ public class PrimorialOrder {
 	}
 
 	/**
-	 * Returns a specific primorial order.
-	 * @param order
+	 * Returns the primorial <code>p_n#</code>
+	 * @param n
 	 * @return
 	 */
-	public static PrimorialOrder ofOrder(int order) {
-		var primes = Arrays.stream(PrimeList.PRIMES).limit(order).toArray();
+	public static long primorialOfOrder(int n) {
+		return Arrays.stream(PrimeList.PRIMES).limit(n).asLongStream().reduce(1, (left, right) -> left * right);
+	}
+
+	/**
+	 * Returns a specific primorial order.
+	 * @param n
+	 * @return
+	 */
+	public static PrimorialOrder ofOrder(int n) {
+		var primes = Arrays.stream(PrimeList.PRIMES).limit(n).toArray();
 		long product = 1;
 		for (int prime : primes) {
 			product *= prime;
 		}
 		final var finalProduct = product;
 		var offsets = LongStream.range(product, 2 * product)
-				.filter(n -> {
+				.filter(num -> {
 					for (int prime : primes) {
-						if ((n % prime) == 0) {
+						if ((num % prime) == 0) {
 							return false;
 						}
 					}
 					return true;
 				})
-				.map(n -> n - finalProduct)
+				.map(num -> num - finalProduct)
 				.toArray();
 		var c = primes.length == 0 ? 1 : primes[primes.length - 1];
-		return new PrimorialOrder(order, c, product, offsets);
+		return new PrimorialOrder(n, c, product, offsets);
+	}
+
+	/**
+	 * @see #allPossiblePrimes(long)
+	 * @return
+	 */
+	public static LongStream allPossiblePrimes() {
+		return allPossiblePrimes(2);
+	}
+
+	/**
+	 * Returns all the possible primes from each primorial order in sequence, starting with the supplied number
+	 * @param from the number to start from, must be at least 2
+	 * @return
+	 */
+	public static LongStream allPossiblePrimes(long from) {
+		if (from < 2) {
+			throw new IllegalArgumentException("from must be at least 2");
+		}
+		return IntStream.rangeClosed(1, 8)
+				.mapToObj(PrimorialOrder::ofOrder)
+				.filter(o -> primorialOfOrder(o.getN() + 1) >= from)
+				.flatMapToLong(order -> {
+					if (order.getK() == 8) {
+						return order.possiblePrimes();
+					}
+					var nextK = primorialOfOrder(order.getN() + 1);
+					var stream = order.possiblePrimes().takeWhile(num -> num < nextK);
+					if (order.getK() < from) {
+						stream = stream.filter(n -> n >= from);
+					}
+					return stream;
+				});
 	}
 
 	public static void main(String[] args) {
