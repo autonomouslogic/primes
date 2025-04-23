@@ -45,7 +45,7 @@ public class PrimorialOrder {
 
 	/**
 	 * Returns all possible primes associated with this order.
-	 * Each number returned is in the form <code>k + i</code> for each <code>i</code>.
+	 * Each number returned is in the form <code>n * k + i</code> for each possible integer <code>n</code> and each <code>i</code>.
 	 * For instance, order 1 will return all odd numbers.
 	 * Order 2 will first return 3 and 5, then 7 and 9, and so on.
 	 * Order 3 will first return 31, 37, 41, 43, 47, 49, 53, 59, then 61, 67, 71, 73, 77, 79, 83, 89, and so on.
@@ -103,7 +103,7 @@ public class PrimorialOrder {
 	}
 
 	/**
-	 * Returns all the possible primes from each primorial order in sequence, starting with the supplied number
+	 * Returns all the possible primes from each primorial order in sequence, starting from the supplied number
 	 * @param from the number to start from, must be at least 2
 	 * @return
 	 */
