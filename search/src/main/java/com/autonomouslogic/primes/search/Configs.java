@@ -2,7 +2,6 @@ package com.autonomouslogic.primes.search;
 
 import com.autonomouslogic.commons.config.Config;
 import com.autonomouslogic.primes.PrimeBitSet;
-
 import java.util.Optional;
 
 public class Configs {

@@ -1,7 +1,6 @@
 package com.autonomouslogic.primes.search;
 
 import com.autonomouslogic.primes.SieveOfEratosthenes;
-import com.autonomouslogic.primes.TrialDivision;
 import com.autonomouslogic.primes.search.meta.ChecksumsMeta;
 import com.autonomouslogic.primes.search.meta.IndexMeta;
 import com.autonomouslogic.primes.search.meta.PrimeFileMeta;
@@ -13,13 +12,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.HashingOutputStream;
-
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,8 +44,8 @@ public class PrimeSearch {
 	private static final File indexJsonFile = new File(tmpDir, "primes.json");
 	private static final File indexHtmlFile = new File(tmpDir, "primes.html");
 
-	private static final long firstTargetFileSize = (long) Math.floor(Math.PI * (double) (100<<10));
-	private static final long targetFileSize = (long) Math.floor(Math.PI * (double) (1<<30));
+	private static final long firstTargetFileSize = (long) Math.floor(Math.PI * (double) (100 << 10));
+	private static final long targetFileSize = (long) Math.floor(Math.PI * (double) (1 << 30));
 	private static final long searchTarget = (long) 1e12;
 
 	private static final ObjectMapper objectMapper = new ObjectMapper()
@@ -180,7 +177,7 @@ public class PrimeSearch {
 		log.info("Writing primes to {}", primeFile);
 		long n = 0;
 		try (var counting = new CountingOutputStream(new BufferedOutputStream(new FileOutputStream(primeFile)));
-			var out = new OutputStreamWriter(counting, StandardCharsets.UTF_8)) {
+				var out = new OutputStreamWriter(counting, StandardCharsets.UTF_8)) {
 			var iterator = primes.iterator();
 			while (iterator.hasNext()) {
 				var prime = iterator.next();
@@ -197,8 +194,7 @@ public class PrimeSearch {
 					if (counting.getByteCount() > firstTargetFileSize) {
 						break;
 					}
-				}
-				else if (counting.getByteCount() > targetFileSize) {
+				} else if (counting.getByteCount() > targetFileSize) {
 					break;
 				}
 			}
