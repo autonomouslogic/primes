@@ -154,14 +154,18 @@ public class Primorials {
 				.mapToObj(Primorials::ofOrderWithCoprimes)
 				.filter(o -> ofOrder(o.getN() + 1) >= from)
 				.flatMapToLong(order -> {
-					if (order.getN() == MAX_ORDER) {
-						return order.possiblePrimes();
+					System.out.printf("Order: %s%n", order);
+					var stream = order.possiblePrimes();
+					if (order.getN() < MAX_ORDER) {
+						System.out.println("not MAX_ORDER");
+						var nextK = ofOrder(order.getN() + 1);
+						System.out.printf("nextK: %s%n", nextK);
+						stream = order.possiblePrimes().takeWhile(num -> num < nextK);
 					}
-					var nextK = ofOrder(order.getN() + 1);
-					var stream = order.possiblePrimes().takeWhile(num -> num < nextK);
 					if (order.getProduct() < from) {
 						stream = stream.filter(n -> n >= from);
 					}
+					System.out.println("return stream");
 					return stream;
 				});
 		if (from == 2) {

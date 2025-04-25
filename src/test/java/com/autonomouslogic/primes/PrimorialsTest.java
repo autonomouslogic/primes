@@ -56,12 +56,16 @@ public class PrimorialsTest {
 						Primorials.ofOrderWithCoprimes(3).possiblePrimes().takeWhile(n -> n < 200))
 				.flatMapToLong(s -> s)
 				.mapToObj(String::valueOf)
-				.collect(Collectors.joining("\n"));
+				.toList();
+		//				.collect(Collectors.joining("\n"));
 		var actual = Primorials.allPossiblePrimes()
 				.peek(n -> System.out.println(n))
-				.takeWhile(n -> n <= 200)
+				//				.takeWhile(n -> n <= 200)
 				.mapToObj(String::valueOf)
-				.collect(Collectors.joining("\n"));
+				.limit(expected.size())
+				.toList();
+		//			.count();
+		//				.collect(Collectors.joining("\n"));
 		assertEquals(expected, actual);
 	}
 
