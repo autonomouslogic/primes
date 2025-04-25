@@ -48,6 +48,7 @@ test {
 spotless {
 	java {
 		target "src/**/*.java"
+		target "search/src/**/*.java"
 		palantirJavaFormat()
 		leadingSpacesToTabs()
 	}
