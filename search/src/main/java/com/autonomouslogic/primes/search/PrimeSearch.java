@@ -47,8 +47,7 @@ public class PrimeSearch {
 	private static final File indexHtmlFile = new File(tmpDir, "primes.html");
 
 	private static final long firstTargetFileCount = (long) Math.floor(Math.PI * 10_000.0);
-//	private static final long targetFileCount = (long) Math.floor(Math.PI * 100_000_000.0);
-	private static final long targetFileCount = (long) Math.floor(Math.PI * 100_000.0);
+	private static final long targetFileCount = (long) Math.floor(Math.PI * 100_000_000.0);
 	private static final long searchTarget = (long) 1e12;
 
 	private static final ObjectMapper objectMapper = new ObjectMapper()
@@ -82,21 +81,18 @@ public class PrimeSearch {
 		}
 		var iterator = runSieve().iterator();
 		fileMeta = new PrimeFileMeta().setCreated(currentTime);
-		while (isFirstFile || getLastPrime() < searchTarget) {
-			var primeFile = writePrimeFile(iterator);
-			if (!isFirstFile) {
-				primeFile = compressFile(primeFile);
-			}
-			fileMeta.setUrl(Configs.HTTP_BASE_PATH.getRequired() + "/" + primeFile.getName());
-			fileMeta.setChecksums(createChecksums(primeFile));
-			indexMeta.setUpdated(currentTime).getPrimeFiles().add(fileMeta);
-			upload(primeFile, primeFile.getPath().endsWith(".xz") ? S3Meta.PRIME_FILE_XZ : S3Meta.PRIME_FILE_PLAIN);
-			writeIndexJson();
-			writeIndexHtml();
-			upload(indexJsonFile, S3Meta.INDEX_JSON);
-			upload(indexHtmlFile, S3Meta.INDEX_HTML);
-			isFirstFile = false;
+		var primeFile = writePrimeFile(iterator);
+		if (!isFirstFile) {
+			primeFile = compressFile(primeFile);
 		}
+		fileMeta.setUrl(Configs.HTTP_BASE_PATH.getRequired() + "/" + primeFile.getName());
+		fileMeta.setChecksums(createChecksums(primeFile));
+		indexMeta.setUpdated(currentTime).getPrimeFiles().add(fileMeta);
+		upload(primeFile, primeFile.getPath().endsWith(".xz") ? S3Meta.PRIME_FILE_XZ : S3Meta.PRIME_FILE_PLAIN);
+		writeIndexJson();
+		writeIndexHtml();
+		upload(indexJsonFile, S3Meta.INDEX_JSON);
+		upload(indexHtmlFile, S3Meta.INDEX_HTML);
 	}
 
 	private long getLastPrime() {
