@@ -19,8 +19,8 @@ public class ConcatPrimeSourceTest {
 
 	@Test
 	void shouldConcatSources() {
-		var primes = new ConcatPrimeSource(first, second).primeStream().iterator();
-		var expected = new PrimeList().primeStream().iterator();
+		var primes = new ConcatPrimeSource(first, second).iterator();
+		var expected = new PrimeList().iterator();
 		while (primes.hasNext()) {
 			assertEquals(expected.nextLong(), primes.nextLong());
 		}
@@ -29,13 +29,13 @@ public class ConcatPrimeSourceTest {
 	@Test
 	void shouldLazyConcatSources() {
 		var expected =
-				LongStream.concat(LongStream.of(2), trialDivision.primeStream()).iterator();
+				LongStream.concat(LongStream.of(2), trialDivision.stream()).iterator();
 		var firstSupplier = spy(new PrimeSourceSupplier(first));
 		var secondSupplier = spy(new PrimeSourceSupplier(second));
 		var primes = new ConcatPrimeSource(firstSupplier, secondSupplier);
 		verify(firstSupplier, never()).get();
 		verify(secondSupplier, never()).get();
-		var iterator = primes.primeStream().iterator();
+		var iterator = primes.iterator();
 		verify(firstSupplier, never()).get();
 		verify(secondSupplier, never()).get();
 		assertEquals(expected.nextLong(), iterator.nextLong());
@@ -53,7 +53,7 @@ public class ConcatPrimeSourceTest {
 	@Test
 	void shouldLazyConcatManySources() {
 		var expected =
-				LongStream.concat(LongStream.of(2), trialDivision.primeStream()).iterator();
+				LongStream.concat(LongStream.of(2), trialDivision.stream()).iterator();
 		var firstSupplier = spy(new PrimeSourceSupplier(first));
 		var secondSupplier = spy(new PrimeSourceSupplier(second));
 		var thirdSupplier = spy(new PrimeSourceSupplier(third));
@@ -61,7 +61,6 @@ public class ConcatPrimeSourceTest {
 		System.out.println(String.format("secondSupplier: %s", System.identityHashCode(secondSupplier)));
 		System.out.println(String.format("thirdSupplier: %s", System.identityHashCode(thirdSupplier)));
 		var iterator = new ConcatPrimeSource(firstSupplier, () -> new ConcatPrimeSource(secondSupplier, thirdSupplier))
-				.primeStream()
 				.iterator();
 		verify(firstSupplier, never()).get();
 		verify(secondSupplier, never()).get();
@@ -87,7 +86,7 @@ public class ConcatPrimeSourceTest {
 		var firstRef = new WeakReference<PrimeSource>(new BoundedPrimeSource(new PrimeList(), 2, 100));
 		var secondRef = new WeakReference<PrimeSource>(new BoundedPrimeSource(new PrimeList(), 101, 200));
 		var primes = new ConcatPrimeSource(() -> firstRef.get(), () -> secondRef.get());
-		primes.primeStream().boxed().toList();
+		primes.stream().boxed().toList();
 		System.gc();
 		assertNull(firstRef.get());
 		assertNull(secondRef.get());

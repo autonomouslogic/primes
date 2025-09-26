@@ -24,7 +24,7 @@ public class PrimeSources {
 			var sieve = new SieveOfEratosthenes(start, memoryIncrements);
 			var initMemoryIncrements = (int) Math.sqrt(memoryIncrements);
 			var init = all(initMemoryIncrements);
-			sieve.init(init.primeStream());
+			sieve.init(init.iterator());
 			sieve.run();
 			var current = new BoundedPrimeSource(sieve, previous.lastNumber() + 2, sieve.lastNumber());
 			Supplier<PrimeSource> currentSupplier = () -> current;

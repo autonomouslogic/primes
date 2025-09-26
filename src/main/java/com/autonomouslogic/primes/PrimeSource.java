@@ -1,5 +1,7 @@
 package com.autonomouslogic.primes;
 
+import java.util.PrimitiveIterator;
+import java.util.Spliterator;
 import java.util.stream.LongStream;
 
 public interface PrimeSource {
@@ -17,7 +19,15 @@ public interface PrimeSource {
 		return Long.MAX_VALUE;
 	}
 
-	LongStream primeStream();
+	PrimitiveIterator.OfLong iterator();
+
+	default LongStream stream() {
+		return Util.toStream(iterator());
+	}
+
+	default Spliterator.OfLong splierator() {
+		return Util.toSpliterator(iterator());
+	}
 
 	default PrimeSource concat(PrimeSource other) {
 		return new ConcatPrimeSource(this, other);

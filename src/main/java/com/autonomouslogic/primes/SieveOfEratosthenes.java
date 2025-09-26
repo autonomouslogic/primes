@@ -1,6 +1,6 @@
 package com.autonomouslogic.primes;
 
-import java.util.stream.LongStream;
+import java.util.PrimitiveIterator;
 
 /**
  * <a href="https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of Eratosthenes</a>
@@ -19,11 +19,11 @@ public class SieveOfEratosthenes implements PrimeSource {
 		primeBits = new PrimeBitSet(offset, memory);
 	}
 
-	public void init(LongStream primes) {
+	public void init(PrimitiveIterator.OfLong primes) {
 		var firstNumber = firstNumber();
 		var lastNumber = lastNumber();
 		var lastCheck = lastCheck();
-		primes.filter(n -> n != 2).takeWhile(n -> n <= lastCheck).forEach(n -> {
+		Util.toStream(primes).filter(n -> n != 2).takeWhile(n -> n <= lastCheck).forEach(n -> {
 			for (long k = 3L * n; k <= lastNumber; k += 2L * n) {
 				if (k >= firstNumber) {
 					primeBits.setIsNotPrime(k);
@@ -63,10 +63,10 @@ public class SieveOfEratosthenes implements PrimeSource {
 	}
 
 	@Override
-	public LongStream primeStream() {
+	public PrimitiveIterator.OfLong iterator() {
 		if (!init || !run) {
 			throw new IllegalStateException("Sieve not initialized");
 		}
-		return primeBits.primeStream();
+		return primeBits.iterator();
 	}
 }

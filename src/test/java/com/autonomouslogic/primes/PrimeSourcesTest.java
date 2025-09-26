@@ -13,9 +13,8 @@ public class PrimeSourcesTest {
 		//		long limit = (long) Math.pow(PrimeList.PRIMES[PrimeList.PRIMES.length - 1] + sieveSize, 2) + sieveSize;
 		//		assertEquals(11018491201L, limit);
 
-		var expected =
-				new PrimalityTestPrimeSource(new TrialDivision()).primeStream().iterator();
-		var primes = PrimeSources.all(64).primeStream().filter(n -> n > 2).iterator();
+		var expected = new PrimalityTestPrimeSource(new TrialDivision()).iterator();
+		var primes = PrimeSources.all(64).stream().filter(n -> n > 2).iterator();
 		for (int i = 0; i < 10_000; i++) {
 			assertEquals(expected.nextLong(), primes.nextLong());
 			System.out.println(i);

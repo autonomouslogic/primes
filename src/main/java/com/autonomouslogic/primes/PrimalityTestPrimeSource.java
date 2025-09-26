@@ -1,5 +1,6 @@
 package com.autonomouslogic.primes;
 
+import java.util.PrimitiveIterator;
 import java.util.stream.LongStream;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -27,7 +28,9 @@ public class PrimalityTestPrimeSource implements PrimeSource {
 	}
 
 	@Override
-	public LongStream primeStream() {
-		return LongStream.iterate(firstNumber, n -> n + 2).filter(n -> test.isPrime(n) && n >= firstNumber);
+	public PrimitiveIterator.OfLong iterator() {
+		return LongStream.iterate(firstNumber, n -> n + 2)
+				.filter(n -> test.isPrime(n) && n >= firstNumber)
+				.iterator();
 	}
 }

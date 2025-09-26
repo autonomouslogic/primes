@@ -2,7 +2,8 @@ package com.autonomouslogic.primes;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.stream.LongStream;
+import java.util.Arrays;
+import java.util.PrimitiveIterator;
 
 /**
  * A hard-coded list of primes.
@@ -42,7 +43,7 @@ public class PrimeList implements PrimeSource {
 	}
 
 	@Override
-	public LongStream primeStream() {
-		return LongStream.of(PRIMES);
+	public PrimitiveIterator.OfLong iterator() {
+		return Arrays.stream(PRIMES).iterator();
 	}
 }

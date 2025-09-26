@@ -2,6 +2,7 @@ package com.autonomouslogic.primes;
 
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.PrimitiveIterator;
 import java.util.stream.LongStream;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -111,7 +112,7 @@ public class PrimeBitSet implements PrimeSource {
 		return b * (long) NUMBERS_PER_BYTE + (long) OFFSETS[address % 8] + offset;
 	}
 
-	public LongStream primeStream() {
+	public PrimitiveIterator.OfLong iterator() {
 		var primes = LongStream.range(0, maxMemory).flatMap(b -> {
 			var p = new long[8];
 			var i = 0;
@@ -124,9 +125,9 @@ public class PrimeBitSet implements PrimeSource {
 			return Arrays.stream(p).filter(n -> n > 0);
 		});
 		if (offset == 30) {
-			return LongStream.concat(Arrays.stream(FIRST_PRIMES), primes);
+			return LongStream.concat(Arrays.stream(FIRST_PRIMES), primes).iterator();
 		} else {
-			return primes;
+			return primes.iterator();
 		}
 	}
 }

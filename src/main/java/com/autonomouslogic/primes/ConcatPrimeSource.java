@@ -1,9 +1,8 @@
 package com.autonomouslogic.primes;
 
+import java.util.PrimitiveIterator;
 import java.util.function.Supplier;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
@@ -34,7 +33,7 @@ public class ConcatPrimeSource implements PrimeSource {
 	}
 
 	@Override
-	public LongStream primeStream() {
+	public PrimitiveIterator.OfLong iterator() {
 		//		return LongStream.concat(
 		//		StreamSupport.longStream(() -> first.get().primeStream().spliterator(), 0, false),
 		//		StreamSupport.longStream(() -> second.get().primeStream().spliterator(), 0, false)
@@ -43,8 +42,9 @@ public class ConcatPrimeSource implements PrimeSource {
 				.flatMapToLong(supplier -> {
 					System.out.println("Getting prime stream from supplier " + System.identityHashCode(supplier));
 					//			return supplier.get().primeStream();
-					return StreamSupport.longStream(supplier.get().primeStream().spliterator(), false);
+					return supplier.get().stream();
 				})
-				.peek(n -> System.out.println("Got prime " + n));
+				.peek(n -> System.out.println("Got prime " + n))
+				.iterator();
 	}
 }

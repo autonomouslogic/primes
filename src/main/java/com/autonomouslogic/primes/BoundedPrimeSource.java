@@ -1,6 +1,6 @@
 package com.autonomouslogic.primes;
 
-import java.util.stream.LongStream;
+import java.util.PrimitiveIterator;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -25,7 +25,10 @@ public class BoundedPrimeSource implements PrimeSource {
 	}
 
 	@Override
-	public LongStream primeStream() {
-		return source.primeStream().filter(n -> n >= firstNumber).takeWhile(n -> n <= lastNumber);
+	public PrimitiveIterator.OfLong iterator() {
+		return source.stream()
+				.filter(n -> n >= firstNumber)
+				.takeWhile(n -> n <= lastNumber)
+				.iterator();
 	}
 }
