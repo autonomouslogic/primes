@@ -9,9 +9,10 @@ public class PrimeSourcesTest {
 	void shouldReturnAllPrimeNumbers() {
 		var expected =
 				new PrimalityTestPrimeSource(new TrialDivision()).primeStream().iterator();
-		var primes = PrimeSources.all().primeStream().filter(n -> n > 2).iterator();
+		var primes = PrimeSources.all(512).primeStream().filter(n -> n > 2).iterator();
 		for (int i = 0; i < 20_000; i++) {
 			assertEquals(expected.nextLong(), primes.nextLong());
+			System.out.println(i);
 		}
 	}
 }

@@ -9,19 +9,23 @@ import lombok.experimental.Accessors;
 
 @Accessors(fluent = true)
 public class ConcatPrimeSource implements PrimeSource {
-	private final PrimeSource first;
+	private final Supplier<PrimeSource> first;
 	private final Supplier<PrimeSource> second;
+
+	@Getter
+	private long firstNumber = -1;
 
 	@Getter
 	private long lastNumber = Long.MAX_VALUE;
 
-	public ConcatPrimeSource(@NonNull PrimeSource first, @NonNull Supplier<PrimeSource> second) {
+	public ConcatPrimeSource(@NonNull Supplier<PrimeSource> first, @NonNull Supplier<PrimeSource> second) {
 		this.first = first;
 		this.second = second;
 	}
 
 	public ConcatPrimeSource(@NonNull PrimeSource first, @NonNull PrimeSource second) {
-		this(first, () -> second);
+		this(() -> first, () -> second);
+		firstNumber = first.firstNumber();
 		lastNumber = second.lastNumber();
 		if (first.lastNumber() - second.firstNumber() > 1) {
 			throw new IllegalStateException();
@@ -29,20 +33,7 @@ public class ConcatPrimeSource implements PrimeSource {
 	}
 
 	@Override
-	public long firstNumber() {
-		return first.firstNumber();
-	}
-
-	@Override
 	public LongStream primeStream() {
-		return Stream.of(first, second).flatMapToLong(source -> {
-			if (source == first) {
-				return first.primeStream();
-			} else if (source == second) {
-				return second.get().primeStream();
-			} else {
-				throw new IllegalStateException();
-			}
-		});
+		return Stream.of(first, second).flatMapToLong(supplier -> supplier.get().primeStream());
 	}
 }
