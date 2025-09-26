@@ -1,18 +1,14 @@
 package com.autonomouslogic.primes;
 
-import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import java.util.function.Supplier;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+
+import java.util.function.Supplier;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
 
 public class ConcatPrimeSourceTest {
 	PrimeSource first = new BoundedPrimeSource(new PrimeList(), 2, 100);

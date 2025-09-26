@@ -1,12 +1,11 @@
 package com.autonomouslogic.primes;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.experimental.Accessors;
-
 import java.util.function.Supplier;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.experimental.Accessors;
 
 @Accessors(fluent = true)
 public class ConcatPrimeSource implements PrimeSource {
@@ -36,15 +35,12 @@ public class ConcatPrimeSource implements PrimeSource {
 
 	@Override
 	public LongStream primeStream() {
-		return Stream.of(first, second)
-			.flatMapToLong(source -> {
+		return Stream.of(first, second).flatMapToLong(source -> {
 			if (source == first) {
 				return first.primeStream();
-			}
-			else if (source == second) {
+			} else if (source == second) {
 				return second.get().primeStream();
-			}
-			else {
+			} else {
 				throw new IllegalStateException();
 			}
 		});

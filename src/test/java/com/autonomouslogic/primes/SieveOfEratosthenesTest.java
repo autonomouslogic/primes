@@ -27,7 +27,10 @@ public class SieveOfEratosthenesTest {
 		var sieve = new SieveOfEratosthenes(1 << 20);
 		assertTrue(sieve.lastNumber() >= lastExpectedPrime);
 		sieve.run();
-		var primes = sieve.primeStream().takeWhile(p -> p <= lastExpectedPrime).boxed().toList();
+		var primes = sieve.primeStream()
+				.takeWhile(p -> p <= lastExpectedPrime)
+				.boxed()
+				.toList();
 		assertEquals(
 				expectedPrimes.stream().map(String::valueOf).collect(Collectors.joining("\n")),
 				primes.stream().map(String::valueOf).collect(Collectors.joining("\n")));
@@ -39,14 +42,16 @@ public class SieveOfEratosthenesTest {
 		var expectedPrimes = Arrays.stream(PrimeList.PRIMES).boxed().toList();
 		var lastExpectedPrime = expectedPrimes.getLast();
 
-		var initPrimes =
-				Arrays.stream(PrimeList.PRIMES).takeWhile(n -> n < offset);
+		var initPrimes = Arrays.stream(PrimeList.PRIMES).takeWhile(n -> n < offset);
 		var sieve = new SieveOfEratosthenes(offset, 1 << 20);
 		assertTrue(sieve.lastNumber() >= lastExpectedPrime);
 		sieve.init(initPrimes);
 
 		sieve.run();
-		var primes = sieve.primeStream().takeWhile(p -> p <= lastExpectedPrime).boxed().toList();
+		var primes = sieve.primeStream()
+				.takeWhile(p -> p <= lastExpectedPrime)
+				.boxed()
+				.toList();
 		assertEquals(
 				expectedPrimes.stream()
 						.filter(n -> n >= offset)

@@ -1,11 +1,8 @@
 package com.autonomouslogic.primes;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
-
 import java.util.stream.LongStream;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 /**
  * Wraps any primality test to produce a prime source.
@@ -31,7 +28,6 @@ public class PrimalityTestPrimeSource implements PrimeSource {
 
 	@Override
 	public LongStream primeStream() {
-		return LongStream.iterate(firstNumber, n -> n + 2)
-			.filter(n -> test.isPrime(n) && n >= firstNumber);
+		return LongStream.iterate(firstNumber, n -> n + 2).filter(n -> test.isPrime(n) && n >= firstNumber);
 	}
 }
