@@ -127,7 +127,7 @@ public class PrimeSearch {
 
 	@SneakyThrows
 	private void initSieve() {
-		var lastCheck = sieve.getLastCheck();
+		var lastCheck = sieve.lastCheck();
 		for (var primeFile : indexMeta.getPrimeFiles()) {
 			var filename = new File(URI.create(primeFile.getUrl()).getPath()).getName();
 			if (primeFile.getFirstPrime() > lastCheck) {
@@ -158,7 +158,8 @@ public class PrimeSearch {
 	private LongStream runSieve() {
 		var start = Instant.now();
 		log.info("Running sieve");
-		var primes = sieve.run();
+		sieve.run();
+		var primes = sieve.primeStream();
 		var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
 		log.info("Sieve completed in {}", time);
 
