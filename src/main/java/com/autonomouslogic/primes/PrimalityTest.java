@@ -6,7 +6,7 @@ public interface PrimalityTest extends LongPredicate {
 	boolean isPrime(long number);
 
 	@Override
-	default boolean test(long value) {
-		return isPrime(value);
+	default boolean test(long number) {
+		return isPrime(number);
 	}
 }
