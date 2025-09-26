@@ -1,20 +1,32 @@
 package com.autonomouslogic.primes;
 
+import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 
+import java.util.function.Supplier;
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
+@Accessors(fluent = true)
 public class ConcatPrimeSource implements PrimeSource {
 	private final PrimeSource first;
-	private final PrimeSource second;
+	private final Supplier<PrimeSource> second;
 
-	public ConcatPrimeSource(@NonNull PrimeSource first, @NonNull PrimeSource second) {
-		if (first.firstNumber() >= second.firstNumber()) {
-			throw new IllegalArgumentException("First source must be smaller than second source");
-		}
+	@Getter
+	private long lastNumber = Long.MAX_VALUE;
+
+	public ConcatPrimeSource(@NonNull PrimeSource first, @NonNull Supplier<PrimeSource> second) {
 		this.first = first;
 		this.second = second;
+	}
+
+	public ConcatPrimeSource(@NonNull PrimeSource first, @NonNull PrimeSource second) {
+		this(first, () -> second);
+		lastNumber = second.lastNumber();
+		if (first.lastNumber() - second.firstNumber() > 1) {
+			throw new IllegalStateException();
+		}
 	}
 
 	@Override
@@ -23,13 +35,18 @@ public class ConcatPrimeSource implements PrimeSource {
 	}
 
 	@Override
-	public long lastNumber() {
-		return second.lastNumber();
-	}
-
-	@Override
 	public LongStream primeStream() {
-		// @todo optimise this so the second stream isn't initialised until needed
-		return LongStream.concat(first.primeStream(), second.primeStream());
+		return Stream.of(first, second)
+			.flatMapToLong(source -> {
+			if (source == first) {
+				return first.primeStream();
+			}
+			else if (source == second) {
+				return second.get().primeStream();
+			}
+			else {
+				throw new IllegalStateException();
+			}
+		});
 	}
 }

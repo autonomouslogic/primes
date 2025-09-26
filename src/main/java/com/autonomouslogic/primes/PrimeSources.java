@@ -5,7 +5,7 @@ package com.autonomouslogic.primes;
  */
 public class PrimeSources {
 	/**
-	 * Returns a prime source which will return all primes.
+	 * Returns unbounded prime source of all primes.
 	 * @return
 	 */
 	public static PrimeSource all() {
