@@ -5,7 +5,7 @@ import java.util.stream.LongStream;
 /**
  * <a href="https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of Eratosthenes</a>
  */
-public class SieveOfEratosthenes implements BoundedPrimeSource {
+public class SieveOfEratosthenes implements PrimeSource {
 	private final PrimeBitSet primeBits;
 	private boolean init = false;
 	private boolean run = false;

@@ -7,7 +7,7 @@ import java.util.stream.LongStream;
 /**
  * A hard-coded list of primes.
  */
-public class PrimeList implements BoundedPrimeSource {
+public class PrimeList implements PrimeSource {
 	/**
 	 * The first 10,000 primes.
 	 */
