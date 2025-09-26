@@ -1,48 +1,60 @@
 plugins {
-    id "java"
-    id "idea"
-    id "application"
-    id "io.freefair.lombok" version "8.12.2.1"
-    id "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin" version "4.0.2"
+	id "java"
+	id "idea"
+	id "application"
+	id "io.freefair.lombok" version "8.12.2.1"
+	id "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin" version "4.0.2"
+	id "com.diffplug.spotless" version "7.2.1"
 }
 
 group = "com.autonomouslogic.primes.search"
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    implementation project(":")
-    implementation "com.autonomouslogic.commons:commons-java:1.9.5"
-    implementation "org.apache.logging.log4j:log4j-api:2.24.3"
-    implementation "org.apache.logging.log4j:log4j-core:2.24.3"
-    implementation "org.apache.logging.log4j:log4j-slf4j2-impl:2.24.3"
-    implementation "com.google.guava:guava:33.4.8-jre"
-    implementation "commons-io:commons-io:2.18.0"
-    implementation "org.apache.commons:commons-compress:1.27.1"
-    implementation "org.tukaani:xz:1.10"
-    implementation "com.fasterxml.jackson.core:jackson-annotations:2.18.3"
-    implementation "com.fasterxml.jackson.core:jackson-core:2.18.3"
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.18.3"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.3"
-    implementation "software.amazon.awssdk:s3:2.26.21"
+	implementation project(":")
+	implementation "com.autonomouslogic.commons:commons-java:1.9.5"
+	implementation "org.apache.logging.log4j:log4j-api:2.24.3"
+	implementation "org.apache.logging.log4j:log4j-core:2.24.3"
+	implementation "org.apache.logging.log4j:log4j-slf4j2-impl:2.24.3"
+	implementation "com.google.guava:guava:33.4.8-jre"
+	implementation "commons-io:commons-io:2.18.0"
+	implementation "org.apache.commons:commons-compress:1.27.1"
+	implementation "org.tukaani:xz:1.10"
+	implementation "com.fasterxml.jackson.core:jackson-annotations:2.18.3"
+	implementation "com.fasterxml.jackson.core:jackson-core:2.18.3"
+	implementation "com.fasterxml.jackson.core:jackson-databind:2.18.3"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.3"
+	implementation "software.amazon.awssdk:s3:2.26.21"
 
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+	testImplementation platform('org.junit:junit-bom:5.10.0')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 application {
-    mainClass = "com.autonomouslogic.primes.search.PrimeSearch"
+	mainClass = "com.autonomouslogic.primes.search.PrimeSearch"
 }
 
 run {
-    environment rootProject.ext.envProperties
-    applicationDefaultJvmArgs = [
-        "-Xmx20G",
-    ]
+	environment rootProject.ext.envProperties
+	applicationDefaultJvmArgs = [
+		"-Xmx20G",
+	]
 }
 
 test {
-    useJUnitPlatform()
+	useJUnitPlatform()
+}
+
+spotless {
+	java {
+		palantirJavaFormat()
+		leadingSpacesToTabs()
+	}
+
+	groovyGradle {
+		leadingSpacesToTabs()
+	}
 }

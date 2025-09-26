@@ -1,9 +1,34 @@
 package com.autonomouslogic.primes;
 
-public interface BoundedPrimeSource extends PrimeSource {
-	/**
-	 * The last number this prime source will check. This is <b>not</b> the last prime number.
-	 * @return
-	 */
-	long lastNumber();
+import java.util.PrimitiveIterator;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
+@Accessors(fluent = true)
+public class BoundedPrimeSource implements PrimeSource {
+	private final PrimeSource source;
+
+	@Getter
+	private final long firstNumber;
+
+	@Getter
+	private final long lastNumber;
+
+	public BoundedPrimeSource(PrimeSource source, long firstNumber, long lastNumber) {
+		this.source = source;
+		this.firstNumber = Math.max(firstNumber, source.firstNumber());
+		this.lastNumber = Math.min(lastNumber, source.lastNumber());
+	}
+
+	public BoundedPrimeSource(PrimeSource source, long lastNumber) {
+		this(source, source.firstNumber(), lastNumber);
+	}
+
+	@Override
+	public PrimitiveIterator.OfLong iterator() {
+		return source.stream()
+				.filter(n -> n >= firstNumber)
+				.takeWhile(n -> n <= lastNumber)
+				.iterator();
+	}
 }

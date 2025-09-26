@@ -1,0 +1,36 @@
+package com.autonomouslogic.primes;
+
+import java.util.PrimitiveIterator;
+import java.util.stream.LongStream;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
+/**
+ * Wraps any primality test to produce a prime source.
+ */
+@Accessors(fluent = true)
+public class PrimalityTestPrimeSource implements PrimeSource {
+	private final PrimalityTest test;
+
+	@Getter
+	private final long firstNumber;
+
+	public PrimalityTestPrimeSource(PrimalityTest test, long firstNumber) {
+		if (firstNumber < 3) {
+			throw new IllegalArgumentException("First number must be at least 3");
+		}
+		this.test = test;
+		this.firstNumber = firstNumber % 2 == 0 ? firstNumber + 1 : firstNumber;
+	}
+
+	public PrimalityTestPrimeSource(TrialDivision test) {
+		this(test, 3);
+	}
+
+	@Override
+	public PrimitiveIterator.OfLong iterator() {
+		return LongStream.iterate(firstNumber, n -> n + 2)
+				.filter(n -> test.isPrime(n) && n >= firstNumber)
+				.iterator();
+	}
+}

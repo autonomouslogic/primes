@@ -86,8 +86,8 @@ public class PrimeBitSetTest {
 	@ValueSource(ints = {30, 300})
 	void firstAndLastNumberShouldMatchNumbersInOutput(int offset) {
 		var set = new PrimeBitSet(offset, 10);
-		var first = set.primeStream().min().getAsLong();
-		var last = set.primeStream().max().getAsLong();
+		var first = set.stream().min().getAsLong();
+		var last = set.stream().max().getAsLong();
 		assertEquals(first, set.firstNumber());
 		assertEquals(last, set.lastNumber());
 	}
@@ -131,7 +131,7 @@ public class PrimeBitSetTest {
 		}
 		assertEquals(
 				Arrays.stream(PRIMES).mapToObj(String::valueOf).collect(Collectors.joining("\n")),
-				bits.primeStream()
+				bits.stream()
 						.takeWhile(n -> n <= last)
 						.mapToObj(String::valueOf)
 						.collect(Collectors.joining("\n")));
@@ -153,7 +153,7 @@ public class PrimeBitSetTest {
 						.filter(p -> p > 3000)
 						.mapToObj(String::valueOf)
 						.collect(Collectors.joining("\n")),
-				bits.primeStream()
+				bits.stream()
 						.takeWhile(n -> n <= last)
 						.mapToObj(String::valueOf)
 						.collect(Collectors.joining("\n")));
