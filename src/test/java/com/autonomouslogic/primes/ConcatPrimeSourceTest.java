@@ -8,6 +8,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import java.lang.ref.WeakReference;
+import java.util.stream.LongStream;
 import org.junit.jupiter.api.Test;
 
 public class ConcatPrimeSourceTest {
@@ -27,6 +28,8 @@ public class ConcatPrimeSourceTest {
 
 	@Test
 	void shouldLazyConcatSources() {
+		var expected =
+				LongStream.concat(LongStream.of(2), trialDivision.primeStream()).iterator();
 		var firstSupplier = spy(new PrimeSourceSupplier(first));
 		var secondSupplier = spy(new PrimeSourceSupplier(second));
 		var primes = new ConcatPrimeSource(firstSupplier, secondSupplier);
@@ -35,12 +38,11 @@ public class ConcatPrimeSourceTest {
 		var iterator = primes.primeStream().iterator();
 		verify(firstSupplier, never()).get();
 		verify(secondSupplier, never()).get();
-		iterator.nextLong();
+		assertEquals(expected.nextLong(), iterator.nextLong());
 		verify(firstSupplier).get();
 		verify(secondSupplier, never()).get();
 		for (int i = 0; i < 24; i++) {
-			var n = iterator.nextLong();
-			assertTrue(n <= 100, Long.toString(n));
+			assertEquals(expected.nextLong(), iterator.nextLong());
 			verify(secondSupplier, never()).get();
 		}
 		var n = iterator.nextLong();
@@ -50,27 +52,32 @@ public class ConcatPrimeSourceTest {
 
 	@Test
 	void shouldLazyConcatManySources() {
-		var verify = trialDivision.primeStream().iterator();
+		var expected =
+				LongStream.concat(LongStream.of(2), trialDivision.primeStream()).iterator();
 		var firstSupplier = spy(new PrimeSourceSupplier(first));
 		var secondSupplier = spy(new PrimeSourceSupplier(second));
 		var thirdSupplier = spy(new PrimeSourceSupplier(third));
+		System.out.println(String.format("firstSupplier: %s", System.identityHashCode(firstSupplier)));
+		System.out.println(String.format("secondSupplier: %s", System.identityHashCode(secondSupplier)));
+		System.out.println(String.format("thirdSupplier: %s", System.identityHashCode(thirdSupplier)));
 		var iterator = new ConcatPrimeSource(firstSupplier, () -> new ConcatPrimeSource(secondSupplier, thirdSupplier))
 				.primeStream()
-				.filter(n -> n > 2)
 				.iterator();
 		verify(firstSupplier, never()).get();
 		verify(secondSupplier, never()).get();
 		verify(thirdSupplier, never()).get();
-		assertEquals(verify.nextLong(), iterator.nextLong());
+		assertEquals(expected.nextLong(), iterator.nextLong());
 		verify(firstSupplier).get();
 		verify(secondSupplier, never()).get();
 		verify(thirdSupplier, never()).get();
-		for (int i = 0; i < 23; i++) {
-			assertEquals(verify.nextLong(), iterator.nextLong());
+		for (int i = 0; i < 24; i++) {
+			assertEquals(expected.nextLong(), iterator.nextLong());
 			verify(secondSupplier, never()).get();
 			verify(thirdSupplier, never()).get();
 		}
-		assertEquals(verify.nextLong(), iterator.nextLong());
+		System.out.println("---------------------- 1");
+		assertEquals(expected.nextLong(), iterator.nextLong());
+		System.out.println("---------------------- 2");
 		verify(secondSupplier).get();
 		verify(thirdSupplier, never()).get();
 	}
