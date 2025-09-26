@@ -27,7 +27,11 @@ public class PrimeSources {
 			sieve.init(init.primeStream());
 			sieve.run();
 			var current = new BoundedPrimeSource(sieve, previous.lastNumber() + 2, sieve.lastNumber());
-			return new ConcatPrimeSource(() -> current, nextSieve(current, memoryIncrements));
+			Supplier<PrimeSource> currentSupplier = () -> current;
+			Supplier<PrimeSource> nextSupplier = nextSieve(current, memoryIncrements);
+			System.out.println("currentSupplier " + System.identityHashCode(currentSupplier));
+			System.out.println("nextSupplier " + System.identityHashCode(nextSupplier));
+			return new ConcatPrimeSource(currentSupplier, nextSupplier);
 		};
 	}
 

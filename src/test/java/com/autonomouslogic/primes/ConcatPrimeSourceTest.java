@@ -8,13 +8,13 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import java.lang.ref.WeakReference;
-import java.util.function.Supplier;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 public class ConcatPrimeSourceTest {
+	PrimeSource trialDivision = new PrimalityTestPrimeSource(new TrialDivision());
 	PrimeSource first = new BoundedPrimeSource(new PrimeList(), 2, 100);
 	PrimeSource second = new BoundedPrimeSource(new PrimeList(), 101, 200);
+	PrimeSource third = new BoundedPrimeSource(new PrimeList(), 201, 300);
 
 	@Test
 	void shouldConcatSources() {
@@ -25,33 +25,54 @@ public class ConcatPrimeSourceTest {
 		}
 	}
 
-	@RequiredArgsConstructor
-	private class PrimeSourceSupplier implements Supplier<PrimeSource> {
-		private final PrimeSource source;
-
-		@Override
-		public PrimeSource get() {
-			return source;
-		}
-	}
-
 	@Test
 	void shouldLazyConcatSources() {
-		var supplier = spy(new PrimeSourceSupplier(second));
-		var primes = new ConcatPrimeSource(() -> first, supplier);
-		verify(supplier, never()).get();
+		var firstSupplier = spy(new PrimeSourceSupplier(first));
+		var secondSupplier = spy(new PrimeSourceSupplier(second));
+		var primes = new ConcatPrimeSource(firstSupplier, secondSupplier);
+		verify(firstSupplier, never()).get();
+		verify(secondSupplier, never()).get();
 		var iterator = primes.primeStream().iterator();
-		verify(supplier, never()).get();
+		verify(firstSupplier, never()).get();
+		verify(secondSupplier, never()).get();
 		iterator.nextLong();
-		verify(supplier, never()).get();
+		verify(firstSupplier).get();
+		verify(secondSupplier, never()).get();
 		for (int i = 0; i < 24; i++) {
 			var n = iterator.nextLong();
 			assertTrue(n <= 100, Long.toString(n));
-			verify(supplier, never()).get();
+			verify(secondSupplier, never()).get();
 		}
 		var n = iterator.nextLong();
 		assertTrue(n >= 101, Long.toString(n));
-		verify(supplier).get();
+		verify(secondSupplier).get();
+	}
+
+	@Test
+	void shouldLazyConcatManySources() {
+		var verify = trialDivision.primeStream().iterator();
+		var firstSupplier = spy(new PrimeSourceSupplier(first));
+		var secondSupplier = spy(new PrimeSourceSupplier(second));
+		var thirdSupplier = spy(new PrimeSourceSupplier(third));
+		var iterator = new ConcatPrimeSource(firstSupplier, () -> new ConcatPrimeSource(secondSupplier, thirdSupplier))
+				.primeStream()
+				.filter(n -> n > 2)
+				.iterator();
+		verify(firstSupplier, never()).get();
+		verify(secondSupplier, never()).get();
+		verify(thirdSupplier, never()).get();
+		assertEquals(verify.nextLong(), iterator.nextLong());
+		verify(firstSupplier).get();
+		verify(secondSupplier, never()).get();
+		verify(thirdSupplier, never()).get();
+		for (int i = 0; i < 23; i++) {
+			assertEquals(verify.nextLong(), iterator.nextLong());
+			verify(secondSupplier, never()).get();
+			verify(thirdSupplier, never()).get();
+		}
+		assertEquals(verify.nextLong(), iterator.nextLong());
+		verify(secondSupplier).get();
+		verify(thirdSupplier, never()).get();
 	}
 
 	@Test

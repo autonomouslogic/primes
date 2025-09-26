@@ -34,6 +34,9 @@ public class ConcatPrimeSource implements PrimeSource {
 
 	@Override
 	public LongStream primeStream() {
-		return Stream.of(first, second).flatMapToLong(supplier -> supplier.get().primeStream());
+		return Stream.of(first, second).flatMapToLong(supplier -> {
+			System.out.println("Getting prime stream from supplier " + System.identityHashCode(supplier));
+			return supplier.get().primeStream();
+		});
 	}
 }
