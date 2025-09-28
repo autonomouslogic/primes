@@ -2,9 +2,9 @@ package com.autonomouslogic.primes;
 
 import java.util.PrimitiveIterator;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
 @Accessors(fluent = true)
@@ -34,17 +34,49 @@ public class ConcatPrimeSource implements PrimeSource {
 
 	@Override
 	public PrimitiveIterator.OfLong iterator() {
-		//		return LongStream.concat(
-		//		StreamSupport.longStream(() -> first.get().primeStream().spliterator(), 0, false),
-		//		StreamSupport.longStream(() -> second.get().primeStream().spliterator(), 0, false)
-		//		);
-		return Stream.of(first, second)
-				.flatMapToLong(supplier -> {
-					System.out.println("Getting prime stream from supplier " + System.identityHashCode(supplier));
-					//			return supplier.get().primeStream();
-					return supplier.get().stream();
-				})
-				.peek(n -> System.out.println("Got prime " + n))
-				.iterator();
+		return new ConcatLongIterator(new LazyIterator(first), new LazyIterator(second));
+	}
+
+	@RequiredArgsConstructor
+	static class ConcatLongIterator implements PrimitiveIterator.OfLong {
+		private final PrimitiveIterator.OfLong first;
+		private final PrimitiveIterator.OfLong second;
+
+		@Override
+		public long nextLong() {
+			if (first.hasNext()) {
+				return first.nextLong();
+			} else {
+				return second.nextLong();
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			return first.hasNext() || second.hasNext();
+		}
+	}
+
+	@RequiredArgsConstructor
+	static class LazyIterator implements PrimitiveIterator.OfLong {
+		private final Supplier<PrimeSource> supplier;
+		private PrimitiveIterator.OfLong iterator;
+
+		@Override
+		public boolean hasNext() {
+			return getIterator().hasNext();
+		}
+
+		@Override
+		public long nextLong() {
+			return getIterator().nextLong();
+		}
+
+		private PrimitiveIterator.OfLong getIterator() {
+			if (iterator == null) {
+				iterator = supplier.get().iterator();
+			}
+			return iterator;
+		}
 	}
 }

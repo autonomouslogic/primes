@@ -15,7 +15,7 @@ public class PrimeSourcesTest {
 
 		var expected = new PrimalityTestPrimeSource(new TrialDivision()).iterator();
 		var primes = PrimeSources.all(64).stream().filter(n -> n > 2).iterator();
-		for (int i = 0; i < 10_000; i++) {
+		for (int i = 0; i < 20_000; i++) {
 			assertEquals(expected.nextLong(), primes.nextLong());
 			System.out.println(i);
 		}

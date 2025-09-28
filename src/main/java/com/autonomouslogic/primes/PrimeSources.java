@@ -29,8 +29,6 @@ public class PrimeSources {
 			var current = new BoundedPrimeSource(sieve, previous.lastNumber() + 2, sieve.lastNumber());
 			Supplier<PrimeSource> currentSupplier = () -> current;
 			Supplier<PrimeSource> nextSupplier = nextSieve(current, memoryIncrements);
-			System.out.println("currentSupplier " + System.identityHashCode(currentSupplier));
-			System.out.println("nextSupplier " + System.identityHashCode(nextSupplier));
 			return new ConcatPrimeSource(currentSupplier, nextSupplier);
 		};
 	}
