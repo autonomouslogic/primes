@@ -3,7 +3,7 @@ plugins {
 	id "idea"
 	id "com.diffplug.spotless" version "7.2.1"
 	id "io.freefair.lombok" version "8.12.2.1"
-	id "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin" version "4.0.2"
+	id "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin" version "7.0.4"
 }
 
 group = "com.autonomouslogic.primes"
