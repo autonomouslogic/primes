@@ -28,7 +28,6 @@ import java.util.PrimitiveIterator;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -41,7 +40,7 @@ public class PrimeSearch {
 	private static final File indexHtmlFile = new File(tmpDir, "primes.html");
 
 	private static final long firstTargetFileCount = (long) Math.floor(Math.PI * 10_000.0);
-	private static final long targetFileCount = (long) Math.floor(Math.PI * 100_000.0);
+	private static final long targetFileCount = (long) Math.floor(Math.PI * 100_000_000.0);
 	private static final long searchTarget = (long) 1e12;
 
 	private static final ObjectMapper objectMapper = new ObjectMapper()
@@ -84,6 +83,8 @@ public class PrimeSearch {
 			upload(indexJsonFile, S3Meta.INDEX_JSON);
 			upload(indexHtmlFile, S3Meta.INDEX_HTML);
 			isFirstFile = false;
+
+			break;
 		}
 	}
 
@@ -114,17 +115,18 @@ public class PrimeSearch {
 				String.format("primes-%03d.txt", indexMeta.getPrimeFiles().size()));
 		log.info("Writing primes to {}", primeFile);
 		long n = 0;
-		try (var counting = new CountingOutputStream(new BufferedOutputStream(new FileOutputStream(primeFile)));
-				var out = new OutputStreamWriter(counting, StandardCharsets.UTF_8)) {
+		try (var out = new OutputStreamWriter(
+				new BufferedOutputStream(new FileOutputStream(primeFile)), StandardCharsets.UTF_8)) {
 			while (iterator.hasNext()) {
 				var prime = iterator.next();
-				out.write(String.valueOf(prime));
-				out.write("\n");
-
 				if (n == 0) {
 					fileMeta.setFirstPrime(prime);
 				}
 				fileMeta.setLastPrime(prime);
+
+				out.write(String.valueOf(prime));
+				out.write("\n");
+				n++;
 
 				if (isFirstFile) {
 					if (n == firstTargetFileCount) {
@@ -133,8 +135,6 @@ public class PrimeSearch {
 				} else if (n == targetFileCount) {
 					break;
 				}
-
-				n++;
 			}
 		}
 		fileMeta.setCount(n).setUncompressedSize(primeFile.length());

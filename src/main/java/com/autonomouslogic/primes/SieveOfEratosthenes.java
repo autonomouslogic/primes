@@ -35,8 +35,8 @@ public class SieveOfEratosthenes implements PrimeSource {
 
 	public void run() {
 		var firstNumber = firstNumber();
-		//		System.out.println(
-		//				String.format("Running sieve with offset %s and %s bytes", primeBits.offset(), primeBits.maxMemory()));
+		System.out.println(
+				String.format("Running sieve with offset %s and %s bytes", primeBits.offset(), primeBits.maxMemory()));
 		if (firstNumber == 2) {
 			firstNumber = 3;
 		}
