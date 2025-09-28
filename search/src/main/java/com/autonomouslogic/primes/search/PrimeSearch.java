@@ -148,8 +148,11 @@ public class PrimeSearch {
 					in = new XZCompressorInputStream(in);
 				}
 				var reader = new BufferedReader(new InputStreamReader(in));
-				var stream = reader.lines().filter(s -> !s.isEmpty()).mapToLong(Long::valueOf);
-				sieve.init(stream);
+				var iterator = reader.lines()
+						.filter(s -> !s.isEmpty())
+						.mapToLong(Long::valueOf)
+						.iterator();
+				sieve.init(iterator);
 			}
 			var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
 			log.info("File initialisation complete in {}", time);
@@ -160,7 +163,7 @@ public class PrimeSearch {
 		var start = Instant.now();
 		log.info("Running sieve");
 		sieve.run();
-		var primes = sieve.primeStream();
+		var primes = sieve.stream();
 		var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
 		log.info("Sieve completed in {}", time);
 

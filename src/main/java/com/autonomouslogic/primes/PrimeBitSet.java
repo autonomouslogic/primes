@@ -2,6 +2,7 @@ package com.autonomouslogic.primes;
 
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.PrimitiveIterator;
 import java.util.stream.LongStream;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -11,7 +12,7 @@ import lombok.experimental.Accessors;
  * Code based on <a href="https://www.rsok.com/~jrm/printprimes.html">Some Prime Numbers</a>.
  */
 @Accessors(fluent = true)
-public class PrimeBitSet implements BoundedPrimeSource {
+public class PrimeBitSet implements PrimeSource {
 	public static final int MAX_MEMORY = Integer.MAX_VALUE / Byte.SIZE;
 
 	private static final long[] FIRST_PRIMES = new long[] {2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
@@ -24,7 +25,10 @@ public class PrimeBitSet implements BoundedPrimeSource {
 	@Getter
 	private final long lastNumber;
 
+	@Getter
 	private final long maxMemory;
+
+	@Getter
 	private final long offset;
 
 	private final BitSet bits = new BitSet();
@@ -111,7 +115,7 @@ public class PrimeBitSet implements BoundedPrimeSource {
 		return b * (long) NUMBERS_PER_BYTE + (long) OFFSETS[address % 8] + offset;
 	}
 
-	public LongStream primeStream() {
+	public PrimitiveIterator.OfLong iterator() {
 		var primes = LongStream.range(0, maxMemory).flatMap(b -> {
 			var p = new long[8];
 			var i = 0;
@@ -124,9 +128,9 @@ public class PrimeBitSet implements BoundedPrimeSource {
 			return Arrays.stream(p).filter(n -> n > 0);
 		});
 		if (offset == 30) {
-			return LongStream.concat(Arrays.stream(FIRST_PRIMES), primes);
+			return LongStream.concat(Arrays.stream(FIRST_PRIMES), primes).iterator();
 		} else {
-			return primes;
+			return primes.iterator();
 		}
 	}
 }
