@@ -19,5 +19,4 @@ public class PrimeFileMeta {
 	private Long compressedSize;
 	private String url;
 	private ChecksumsMeta checksums;
-	private Instant created;
 }

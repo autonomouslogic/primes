@@ -74,14 +74,13 @@ public class PrimeSearch {
 		var source = isFirstFile ? PrimeSources.all(memory) : PrimeSources.startingFrom(getLastPrime() + 2, memory);
 		var iterator = source.iterator();
 		while (isFirstFile || getLastPrime() < searchTarget) {
-			fileMeta = new PrimeFileMeta().setCreated(currentTime());
+			fileMeta = new PrimeFileMeta();
 			var primeFile = writePrimeFile(iterator);
 			if (!isFirstFile) {
 				primeFile = compressFile(primeFile);
 			}
 			fileMeta.setUrl(Configs.HTTP_BASE_PATH.getRequired() + "/" + primeFile.getName());
 			fileMeta.setChecksums(createChecksums(primeFile));
-			indexMeta.setUpdated(currentTime());
 			indexMeta.getPrimeFiles().add(fileMeta);
 			upload(primeFile, primeFile.getPath().endsWith(".xz") ? S3Meta.PRIME_FILE_XZ : S3Meta.PRIME_FILE_PLAIN);
 			writeIndexJson();
@@ -217,10 +216,6 @@ public class PrimeSearch {
 
 		var res = client.putObject(req, file.toPath());
 		log.info("{}/{} uploaded with version {}", req.bucket(), req.key(), res.versionId());
-	}
-
-	private static final Instant currentTime() {
-		return Instant.now().truncatedTo(ChronoUnit.SECONDS);
 	}
 
 	public static void main(String[] args) {

@@ -14,5 +14,4 @@ import lombok.experimental.Accessors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class IndexMeta {
 	private List<PrimeFileMeta> primeFiles;
-	private Instant updated;
 }
