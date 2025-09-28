@@ -63,6 +63,7 @@ public class PrimeSearch {
 
 	@SneakyThrows
 	private void run() {
+		log.info("Starting search");
 		initTmpDir();
 		initMeta();
 		if (!isFirstFile && getLastPrime() >= searchTarget) {
@@ -86,8 +87,6 @@ public class PrimeSearch {
 			upload(indexJsonFile, S3Meta.INDEX_JSON);
 			upload(indexHtmlFile, S3Meta.INDEX_HTML);
 			isFirstFile = false;
-
-			break;
 		}
 	}
 
