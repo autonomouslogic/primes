@@ -20,6 +20,8 @@ public class SieveOfEratosthenes implements PrimeSource {
 	}
 
 	public void init(PrimitiveIterator.OfLong primes) {
+		System.out.println(
+			String.format("Init sieve with offset %s and %s bytes", primeBits.offset(), primeBits.maxMemory()));
 		var firstNumber = firstNumber();
 		var lastNumber = lastNumber();
 		var lastCheck = lastCheck();
