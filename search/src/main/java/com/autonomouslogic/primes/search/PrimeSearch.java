@@ -44,6 +44,8 @@ public class PrimeSearch {
 
 	private static final long firstTargetFileCount = (long) Math.floor(Math.PI * 10_000.0);
 	private static final long targetFileCount = (long) Math.floor(Math.PI * 100_000_000.0);
+	//	private static final long firstTargetFileCount = 100;
+	//	private static final long targetFileCount = firstTargetFileCount;
 	private static final long searchTarget = (long) 1e12;
 
 	private static final ObjectMapper objectMapper = new ObjectMapper()
@@ -72,15 +74,16 @@ public class PrimeSearch {
 		}
 		var source = isFirstFile ? PrimeSources.all(memory) : PrimeSources.startingFrom(getLastPrime() + 2, memory);
 		var iterator = source.iterator();
-		fileMeta = new PrimeFileMeta().setCreated(currentTime);
 		while (isFirstFile || getLastPrime() < searchTarget) {
+			fileMeta = new PrimeFileMeta().setCreated(currentTime);
 			var primeFile = writePrimeFile(iterator);
 			if (!isFirstFile) {
 				primeFile = compressFile(primeFile);
 			}
 			fileMeta.setUrl(Configs.HTTP_BASE_PATH.getRequired() + "/" + primeFile.getName());
 			fileMeta.setChecksums(createChecksums(primeFile));
-			indexMeta.setUpdated(currentTime).getPrimeFiles().add(fileMeta);
+			indexMeta.setUpdated(currentTime);
+			indexMeta.getPrimeFiles().add(fileMeta);
 			upload(primeFile, primeFile.getPath().endsWith(".xz") ? S3Meta.PRIME_FILE_XZ : S3Meta.PRIME_FILE_PLAIN);
 			writeIndexJson();
 			writeIndexHtml();
