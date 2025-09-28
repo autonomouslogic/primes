@@ -1,5 +1,6 @@
 package com.autonomouslogic.primes.search;
 
+import com.autonomouslogic.primes.PrimeBitSet;
 import com.autonomouslogic.primes.PrimeSources;
 import com.autonomouslogic.primes.search.meta.ChecksumsMeta;
 import com.autonomouslogic.primes.search.meta.IndexMeta;
@@ -39,6 +40,8 @@ public class PrimeSearch {
 	private static final File indexJsonFile = new File(tmpDir, "primes.json");
 	private static final File indexHtmlFile = new File(tmpDir, "primes.html");
 
+	private static final int memory = PrimeBitSet.MAX_MEMORY;
+
 	private static final long firstTargetFileCount = (long) Math.floor(Math.PI * 10_000.0);
 	private static final long targetFileCount = (long) Math.floor(Math.PI * 100_000_000.0);
 	private static final long searchTarget = (long) 1e12;
@@ -66,7 +69,7 @@ public class PrimeSearch {
 			log.info("Target {} reached", searchTarget);
 			return;
 		}
-		var source = isFirstFile ? PrimeSources.all() : PrimeSources.startingFrom(getLastPrime() + 2);
+		var source = isFirstFile ? PrimeSources.all(memory) : PrimeSources.startingFrom(getLastPrime() + 2, memory);
 		var iterator = source.iterator();
 		fileMeta = new PrimeFileMeta().setCreated(currentTime);
 		while (isFirstFile || getLastPrime() < searchTarget) {
