@@ -25,7 +25,10 @@ public class PrimeBitSet implements PrimeSource {
 	@Getter
 	private final long lastNumber;
 
+	@Getter
 	private final long maxMemory;
+
+	@Getter
 	private final long offset;
 
 	private final BitSet bits = new BitSet();
