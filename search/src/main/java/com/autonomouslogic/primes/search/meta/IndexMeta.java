@@ -3,7 +3,6 @@ package com.autonomouslogic.primes.search.meta;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import java.time.Instant;
 import java.util.List;
 import lombok.Data;
 import lombok.experimental.Accessors;

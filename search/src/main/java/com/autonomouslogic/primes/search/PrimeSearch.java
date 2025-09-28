@@ -56,7 +56,8 @@ public class PrimeSearch {
 			.enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
 			.enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
 			.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
-			.enable(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS);
+			.enable(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS)
+			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
 	private IndexMeta indexMeta;
 	private PrimeFileMeta fileMeta;
