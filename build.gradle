@@ -1,7 +1,7 @@
 plugins {
 	id "java"
 	id "idea"
-	id "com.diffplug.spotless" version "7.0.2"
+	id "com.diffplug.spotless" version "7.2.1"
 	id "io.freefair.lombok" version "8.12.2.1"
 	id "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin" version "4.0.2"
 }
@@ -31,6 +31,7 @@ allprojects {
 dependencies {
 	testImplementation platform("org.junit:junit-bom:5.10.0")
 	testImplementation "org.junit.jupiter:junit-jupiter"
+	testImplementation "org.mockito:mockito-core:5.19.0"
 }
 
 test {
@@ -47,8 +48,6 @@ test {
 
 spotless {
 	java {
-		target "src/**/*.java"
-		target "search/src/**/*.java"
 		palantirJavaFormat()
 		leadingSpacesToTabs()
 	}

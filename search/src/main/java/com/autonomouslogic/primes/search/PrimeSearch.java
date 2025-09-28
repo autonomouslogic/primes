@@ -47,8 +47,7 @@ public class PrimeSearch {
 	private static final File indexHtmlFile = new File(tmpDir, "primes.html");
 
 	private static final long firstTargetFileCount = (long) Math.floor(Math.PI * 10_000.0);
-//	private static final long targetFileCount = (long) Math.floor(Math.PI * 100_000_000.0);
-	private static final long targetFileCount = (long) Math.floor(Math.PI * 100_000.0);
+	private static final long targetFileCount = (long) Math.floor(Math.PI * 100_000_000.0);
 	private static final long searchTarget = (long) 1e12;
 
 	private static final ObjectMapper objectMapper = new ObjectMapper()
@@ -133,7 +132,7 @@ public class PrimeSearch {
 
 	@SneakyThrows
 	private void initSieve() {
-		var lastCheck = sieve.getLastCheck();
+		var lastCheck = sieve.lastCheck();
 		for (var primeFile : indexMeta.getPrimeFiles()) {
 			var filename = new File(URI.create(primeFile.getUrl()).getPath()).getName();
 			if (primeFile.getFirstPrime() > lastCheck) {
@@ -153,8 +152,11 @@ public class PrimeSearch {
 					in = new XZCompressorInputStream(in);
 				}
 				var reader = new BufferedReader(new InputStreamReader(in));
-				var stream = reader.lines().filter(s -> !s.isEmpty()).mapToLong(Long::valueOf);
-				sieve.init(stream);
+				var iterator = reader.lines()
+						.filter(s -> !s.isEmpty())
+						.mapToLong(Long::valueOf)
+						.iterator();
+				sieve.init(iterator);
 			}
 			var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
 			log.info("File initialisation complete in {}", time);
@@ -164,7 +166,8 @@ public class PrimeSearch {
 	private LongStream runSieve() {
 		var start = Instant.now();
 		log.info("Running sieve");
-		var primes = sieve.run();
+		sieve.run();
+		var primes = sieve.stream();
 		var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
 		log.info("Sieve completed in {}", time);
 
