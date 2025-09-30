@@ -39,9 +39,6 @@ application {
 
 run {
 	environment rootProject.ext.envProperties
-	applicationDefaultJvmArgs = [
-		"-Xmx20G",
-	]
 }
 
 test {
