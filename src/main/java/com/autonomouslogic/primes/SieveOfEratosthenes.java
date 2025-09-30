@@ -1,8 +1,5 @@
 package com.autonomouslogic.primes;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.PrimitiveIterator;
 
 /**
@@ -26,10 +23,6 @@ public class SieveOfEratosthenes implements PrimeSource {
 		var firstNumber = firstNumber();
 		var lastNumber = lastNumber();
 		var lastCheck = lastCheck();
-		System.out.println(String.format(
-				"Init sieve - first number %s, last number %s, last check %s, offset %s, %s bytes",
-				firstNumber, lastNumber, lastCheck, primeBits.offset(), primeBits.maxMemory()));
-		var start = Instant.now();
 		Util.toStream(primes).filter(n -> n != 2).takeWhile(n -> n <= lastCheck).forEach(n -> {
 			for (long k = 3L * n; k <= lastNumber; k += 2L * n) {
 				if (k >= firstNumber) {
@@ -37,20 +30,16 @@ public class SieveOfEratosthenes implements PrimeSource {
 				}
 			}
 		});
-		var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
-		System.out.println(String.format("Init sieve completed in %s", time));
 		init = true;
 	}
 
 	public void run() {
 		var firstNumber = firstNumber();
-		System.out.println(String.format("Running sieve"));
 		if (firstNumber == 2) {
 			firstNumber = 3;
 		}
 		var lastNumber = lastNumber();
 		var lastCheck = lastCheck();
-		var start = Instant.now();
 		for (long n = firstNumber; n <= lastCheck; n += 2) {
 			if (primeBits.isPrime(n)) {
 				for (long k = 3L * n; k <= lastNumber; k += 2L * n) {
@@ -58,8 +47,6 @@ public class SieveOfEratosthenes implements PrimeSource {
 				}
 			}
 		}
-		var time = Duration.between(start, Instant.now()).truncatedTo(ChronoUnit.MILLIS);
-		System.out.println(String.format("Run sieve completed in %s", time));
 		run = true;
 	}
 
