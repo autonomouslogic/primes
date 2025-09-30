@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Java ${{ matrix.distribution }} ${{ matrix.version }}
+      - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: ${{ matrix.distribution }}
