@@ -57,9 +57,6 @@ public class ConcatPrimeSourceTest {
 		var firstSupplier = spy(new PrimeSourceSupplier(first));
 		var secondSupplier = spy(new PrimeSourceSupplier(second));
 		var thirdSupplier = spy(new PrimeSourceSupplier(third));
-		System.out.println(String.format("firstSupplier: %s", System.identityHashCode(firstSupplier)));
-		System.out.println(String.format("secondSupplier: %s", System.identityHashCode(secondSupplier)));
-		System.out.println(String.format("thirdSupplier: %s", System.identityHashCode(thirdSupplier)));
 		var iterator = new ConcatPrimeSource(firstSupplier, () -> new ConcatPrimeSource(secondSupplier, thirdSupplier))
 				.iterator();
 		verify(firstSupplier, never()).get();
@@ -74,9 +71,7 @@ public class ConcatPrimeSourceTest {
 			verify(secondSupplier, never()).get();
 			verify(thirdSupplier, never()).get();
 		}
-		System.out.println("---------------------- 1");
 		assertEquals(expected.nextLong(), iterator.nextLong());
-		System.out.println("---------------------- 2");
 		verify(secondSupplier).get();
 		verify(thirdSupplier, never()).get();
 	}
