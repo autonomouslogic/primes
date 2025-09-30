@@ -6,15 +6,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        distribution:
+          - temurin
+          - microsoft
+          - corretto
+          - oracle
+          - graalvm
+          - jetbrains
         version: [21]
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Java ${{ matrix.version }}
+      - name: Setup Java ${{ matrix.distribution }} ${{ matrix.version }}
         uses: actions/setup-java@v5
         with:
-          distribution: temurin
+          distribution: ${{ matrix.distribution }}
           java-version: ${{ matrix.version }}
           cache: gradle
 
