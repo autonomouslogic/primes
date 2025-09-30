@@ -3,7 +3,6 @@ package com.autonomouslogic.primes.search.meta;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import java.time.Instant;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -19,5 +18,4 @@ public class PrimeFileMeta {
 	private Long compressedSize;
 	private String url;
 	private ChecksumsMeta checksums;
-	private Instant created;
 }
