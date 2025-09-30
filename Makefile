@@ -3,6 +3,9 @@
 test:
 	./gradlew test --stacktrace
 
+lint:
+	./gradlew spotlessCheck --stacktrace
+
 format:
 	./gradlew spotlessApply --stacktrace
 
