@@ -15,21 +15,21 @@ repositories {
 
 dependencies {
 	implementation project(":")
-	implementation "com.autonomouslogic.commons:commons-java:1.9.5"
-	implementation "org.apache.logging.log4j:log4j-api:2.24.3"
-	implementation "org.apache.logging.log4j:log4j-core:2.24.3"
-	implementation "org.apache.logging.log4j:log4j-slf4j2-impl:2.24.3"
-	implementation "com.google.guava:guava:33.4.8-jre"
-	implementation "commons-io:commons-io:2.18.0"
-	implementation "org.apache.commons:commons-compress:1.27.1"
+	implementation "com.autonomouslogic.commons:commons-java:1.9.8"
+	implementation "org.apache.logging.log4j:log4j-api:2.25.2"
+	implementation "org.apache.logging.log4j:log4j-core:2.25.2"
+	implementation "org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2"
+	implementation "com.google.guava:guava:33.5.0-jre"
+	implementation "commons-io:commons-io:2.20.0"
+	implementation "org.apache.commons:commons-compress:1.28.0"
 	implementation "org.tukaani:xz:1.10"
-	implementation "com.fasterxml.jackson.core:jackson-annotations:2.18.3"
-	implementation "com.fasterxml.jackson.core:jackson-core:2.18.3"
-	implementation "com.fasterxml.jackson.core:jackson-databind:2.18.3"
-	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.3"
-	implementation "software.amazon.awssdk:s3:2.26.21"
+	implementation "com.fasterxml.jackson.core:jackson-annotations:2.20"
+	implementation "com.fasterxml.jackson.core:jackson-core:2.20.0"
+	implementation "com.fasterxml.jackson.core:jackson-databind:2.20.0"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0"
+	implementation "software.amazon.awssdk:s3:2.35.0"
 
-	testImplementation platform('org.junit:junit-bom:5.10.0')
+	testImplementation platform('org.junit:junit-bom:5.14.0')
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
