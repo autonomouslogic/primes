@@ -29,10 +29,10 @@ allprojects {
 }
 
 dependencies {
-	testImplementation platform("org.junit:junit-bom:5.10.0")
+	testImplementation platform("org.junit:junit-bom:5.14.0")
 	testImplementation "org.junit.jupiter:junit-jupiter"
 	testImplementation "org.junit.platform:junit-platform-launcher"
-	testImplementation "org.mockito:mockito-core:5.19.0"
+	testImplementation "org.mockito:mockito-core:5.20.0"
 }
 
 test {
