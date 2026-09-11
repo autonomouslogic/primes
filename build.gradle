@@ -1,9 +1,9 @@
 plugins {
 	id "java"
 	id "idea"
-	id "com.diffplug.spotless" version "8.0.0"
-	id "io.freefair.lombok" version "9.0.0"
-	id "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin" version "7.0.6"
+	id "com.diffplug.spotless" version "8.10.2"
+	id "io.freefair.lombok" version "9.5.0"
+	id "org.danilopianini.git-sensitive-semantic-versioning-gradle-plugin" version "7.0.24"
 }
 
 group = "com.autonomouslogic.primes"
@@ -29,10 +29,10 @@ allprojects {
 }
 
 dependencies {
-	testImplementation platform("org.junit:junit-bom:5.14.1")
+	testImplementation platform("org.junit:junit-bom:5.14.4")
 	testImplementation "org.junit.jupiter:junit-jupiter"
 	testImplementation "org.junit.platform:junit-platform-launcher"
-	testImplementation "org.mockito:mockito-core:5.20.0"
+	testImplementation "org.mockito:mockito-core:5.23.0"
 }
 
 test {
